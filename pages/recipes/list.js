@@ -3,7 +3,6 @@ import {
   CATEGORIES,
   FILTER_SEARCH,
   FILTER_SEARCH_COUNT,
-  MAX_COOKING_TIME,
 } from "../../apollo/queries";
 import styles from "../../styles/Recipe/List.module.css";
 import _ from "lodash";
@@ -18,7 +17,6 @@ import { MehOutlined } from "@ant-design/icons";
 
 import {
   getFilters,
-  getPage,
   getPagination,
   getPerPage,
   updateFilters,
@@ -30,7 +28,6 @@ export default function List({ categories = null, errors = null }) {
   const router = useRouter();
 
   const dispatch = useDispatch();
-  const pageState = useSelector(getPage);
   const perPageState = useSelector(getPerPage);
   const paginationState = useSelector(getPagination);
   const filters = useSelector(getFilters);
@@ -58,7 +55,8 @@ export default function List({ categories = null, errors = null }) {
     },
   });
 
-  const getTitle = useMemo(() => {
+  // Gets list title ex. "Search results for ... in ... categories"
+  const getListTitle = useMemo(() => {
     let categoriesList = [];
     if (router.query?.categories)
       router.query.categories.split(",").forEach((category) => {
@@ -91,6 +89,7 @@ export default function List({ categories = null, errors = null }) {
     return `Recipes`;
   }, [router.query]);
 
+  // Update state with URL queries on load
   useEffect(() => {
     async function funct() {
       await _.forEach(router.query, async (value, key) => {
@@ -102,7 +101,6 @@ export default function List({ categories = null, errors = null }) {
           await dispatch(updateFilters({ name: key, value: value.split(",") }));
         }
       });
-
       setLoadingDefaults(false);
     }
     funct();
@@ -126,6 +124,7 @@ export default function List({ categories = null, errors = null }) {
     }
   }, [paginationState]);
 
+  // Update URL with queries
   const sendQuery = useCallback(
     (resetPage, pagination) => {
       let queryParameters = "/recipes/list";
@@ -140,6 +139,7 @@ export default function List({ categories = null, errors = null }) {
         }
         queryParameters = queryParameters.concat(`&${key}=${value}`);
       });
+
       _.forEach(paginationState, (value, key) => {
         if (_.isEqual(value, FILTER_DEFAULTS[key])) return;
         if (resetPage && key === "page") {
@@ -209,18 +209,6 @@ export default function List({ categories = null, errors = null }) {
           { publisher: { _contains: router.query.author } },
         ],
       });
-
-    // RATING FILTER QUERY
-    // if (router.query?.categories)
-    //   router.query.categories.split(",").forEach((category) => {
-    //     filterQueries.push({
-    //       categories: {
-    //         categories_id: {
-    //           id: { _contains: category },
-    //         },
-    //       },
-    //     });
-    //   });
     try {
       queryCount({
         variables: {
@@ -239,6 +227,7 @@ export default function List({ categories = null, errors = null }) {
     }
   }, [router.query]);
 
+  // Error handler
   if (errors || error || countError)
     return (
       <Layout title="Error" activeNav="home">
@@ -293,7 +282,7 @@ export default function List({ categories = null, errors = null }) {
         >
           <div className={styles.recipes}>
             <div className={styles.recipes_list_title}>
-              {getTitle} (<span>{itemsCount}</span> found)
+              {getListTitle} (<span>{itemsCount}</span> found)
             </div>
             <div className={styles.recipes_list}>
               {data?.recipes.length > 0 ? (

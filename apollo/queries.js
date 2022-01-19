@@ -80,17 +80,17 @@ export const CATEGORIES = gql`
   }
 `;
 
-export const MAX_COOKING_TIME = gql`
-  query MaxCookingTime {
-    recipes(
-      filter: { cooking_time: { _gt: 1 } }
-      sort: "-cooking_time"
-      limit: 1
-    ) {
-      cooking_time
-    }
-  }
-`;
+// export const MAX_COOKING_TIME = gql`
+//   query MaxCookingTime {
+//     recipes(
+//       filter: { cooking_time: { _gt: 1 } }
+//       sort: "-cooking_time"
+//       limit: 1
+//     ) {
+//       cooking_time
+//     }
+//   }
+// `;
 
 export const FILTER_SEARCH = gql`
   query FilterSearch($filters: [recipes_filter], $page: Int, $perPage: Int) {
