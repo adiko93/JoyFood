@@ -1,4 +1,4 @@
-import { client } from "../_app";
+import client from "../../apollo/client";
 import {
   CATEGORIES,
   FILTER_SEARCH,
@@ -24,7 +24,6 @@ import {
   updatePagination,
 } from "../../state/listSlice";
 import { updateMaxCookingTime } from "../../state/utilitySlice";
-import Link from "next/link";
 import Layout from "../../components/Layout/Layout";
 
 export default function List({

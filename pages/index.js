@@ -2,7 +2,7 @@ import RecipesSection from "../components/Home/RecipesSection";
 import Hero from "../components/Home/Hero";
 import { CAROUSEL_RECIPES } from "../apollo/queries";
 import Layout from "../components/Layout/Layout";
-import { client } from "./_app";
+import client from "../apollo/client";
 
 export default function Home({ dinnerProps, breakfastProps, dessertProps }) {
   return (
