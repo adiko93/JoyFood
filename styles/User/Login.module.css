@@ -1,0 +1,59 @@
+.container {
+  padding-inline: 4rem;
+
+  transform: translateY(-35px);
+}
+
+.loginTitle {
+  font-size: 2.6rem;
+  font-weight: 700;
+}
+.loginDescription {
+  font-size: 1.6rem;
+  font-weight: 400;
+}
+
+.login_form_forgot {
+  float: right;
+}
+.loginButton {
+  width: 100%;
+}
+.loginBottom {
+  text-align: center;
+}
+
+.oauth {
+  display: flex;
+}
+.facebook {
+  border-radius: 8px;
+  padding: 7px 5px;
+  font-size: 1.3rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  background-color: transparent;
+}
+.google {
+  border-radius: 8px;
+  padding: 7px 10px;
+  font-size: 1.3rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  margin-left: 4px;
+  background-color: transparent;
+}
+.google svg {
+  width: 30px;
+  height: 30px;
+  margin-right: 4px;
+  transform: translateX(-4px);
+  fill: black;
+}
+.facebook svg {
+  width: 30px;
+  height: 30px;
+  margin-right: 2px;
+}

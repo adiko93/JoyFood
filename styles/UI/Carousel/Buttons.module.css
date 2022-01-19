@@ -1,0 +1,72 @@
+.button {
+  outline: 0;
+  cursor: pointer;
+  background-color: transparent;
+  touch-action: manipulation;
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 0;
+  width: 7rem;
+  height: 7rem;
+  justify-content: center;
+  align-items: center;
+  fill: #ffffff;
+  padding: 0;
+}
+
+.button:disabled {
+  cursor: default;
+  opacity: 0.3;
+}
+
+.button__svg {
+  width: 50%;
+  height: 50%;
+}
+
+.buttonPrev {
+  background: linear-gradient(to right, #f0bd00, #e57600);
+  border-radius: 50%;
+  left: 27px;
+}
+.buttonPrev svg {
+  transform: translateX(-3px);
+}
+.buttonNext {
+  background: linear-gradient(to right, #f0bd00, #e57600);
+  border-radius: 50%;
+  right: 27px;
+}
+.buttonNext svg {
+  transform: translateX(3px);
+}
+
+.dot {
+  background-color: transparent;
+  cursor: pointer;
+  position: relative;
+  padding: 0;
+  outline: 0;
+  border: 0;
+  width: 30px;
+  height: 30px;
+  margin-right: 7.5px;
+  margin-left: 7.5px;
+  display: flex;
+  align-items: center;
+}
+
+.dot:after {
+  background-color: #efefef;
+  width: 100%;
+  height: 4px;
+  border-radius: 2px;
+  content: "";
+}
+
+.dot.is-selected:after {
+  background-color: #1bcacd;
+  opacity: 1;
+}

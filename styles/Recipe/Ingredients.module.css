@@ -1,0 +1,20 @@
+.container {
+  padding-inline: 5rem;
+  font-size: 1.6rem;
+  display: flex;
+  flex-flow: column;
+  flex-grow: 1;
+}
+.title {
+  color: #fa9400;
+  font-size: 3.7rem;
+  font-weight: 700;
+  padding: 2rem 0 1.5rem 2rem;
+}
+.list {
+  display: grid;
+  grid-auto-flow: column;
+  grid-row-gap: 10px;
+  grid-column-gap: 10px;
+  grid-template-rows: repeat(8, 1fr);
+}

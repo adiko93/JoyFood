@@ -1,0 +1,114 @@
+.carousel {
+  position: relative;
+  background-color: #f7f7f7;
+  padding: 20px;
+  max-width: 670px;
+  margin-inline: auto;
+  height: auto;
+}
+
+.viewport {
+  overflow: hidden;
+  width: 100%;
+}
+
+.viewport.is-draggable {
+  cursor: move;
+  cursor: grab;
+}
+
+.viewport.is-dragging {
+  cursor: grabbing;
+}
+
+.container {
+  display: flex;
+  user-select: none;
+  height: 60vh;
+  -webkit-touch-callout: none;
+  -khtml-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  margin-left: -10px;
+}
+
+.slide {
+  display: flex;
+  padding-left: 10px;
+  min-width: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.slide__inner {
+  display: flex;
+  align-content: center;
+  justify-content: center;
+  overflow: hidden;
+  transition: all 0.3s;
+  margin-block: auto;
+}
+
+.slide__img {
+  display: block;
+  object-fit: cover;
+  object-position: center;
+  height: 100%;
+}
+
+.thumb {
+  background-color: #f7f7f7;
+  padding: 20px;
+  max-width: 670px;
+  margin-inline: auto;
+  padding-top: 0;
+  margin-top: -12px;
+}
+
+.container__thumb {
+  cursor: default;
+  margin-left: -8px;
+}
+
+.slide__thumb {
+  padding-left: 8px;
+  min-width: 20%;
+}
+
+.slide__inner__thumb {
+  touch-action: manipulation;
+  cursor: pointer;
+  border: 0;
+  outline: 0;
+  margin: 0;
+  padding: 0;
+  height: 100px;
+  width: 100%;
+  background-color: transparent;
+  position: relative;
+  display: block;
+  overflow: hidden;
+}
+
+.slide__thumbnail {
+  position: absolute;
+  opacity: 0.2;
+  top: 0;
+  bottom: 0;
+  left: -10000%;
+  right: -10000%;
+  margin: auto;
+  min-width: 1000%;
+  min-height: 1000%;
+  max-width: none;
+  transform: scale(0.1);
+  transition: opacity 0.2s;
+}
+
+.slide__thumb.is_selected .slide__thumbnail {
+  opacity: 1;
+}
+.wraper {
+  height: 71rem;
+  overflow: hidden;
+  flex: 1 1 400px;
+}
