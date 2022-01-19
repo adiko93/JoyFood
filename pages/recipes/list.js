@@ -15,6 +15,7 @@ import RecipeCard from "../../components/UI/RecipeCard";
 import { Button, Pagination, Result, Spin } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { MehOutlined } from "@ant-design/icons";
+
 import {
   getFilters,
   getPage,
@@ -23,14 +24,9 @@ import {
   updateFilters,
   updatePagination,
 } from "../../state/listSlice";
-import { updateMaxCookingTime } from "../../state/utilitySlice";
 import Layout from "../../components/Layout/Layout";
 
-export default function List({
-  categories = null,
-  maxCookingTime = null,
-  errors = null,
-}) {
+export default function List({ categories = null, errors = null }) {
   const router = useRouter();
 
   const dispatch = useDispatch();
@@ -44,7 +40,7 @@ export default function List({
   const FILTER_DEFAULTS = {
     search: "",
     categories: [],
-    cookingTime: [1, maxCookingTime],
+    cookingTime: [1, 2000],
     ingredients: [],
     rating: [0, 5],
     author: "",
@@ -97,11 +93,6 @@ export default function List({
 
   useEffect(() => {
     async function funct() {
-      // await dispatch(resetToDefault());
-      await dispatch(updateMaxCookingTime(maxCookingTime));
-      await dispatch(
-        updateFilters({ name: "cookingTime", value: [1, maxCookingTime] })
-      );
       await _.forEach(router.query, async (value, key) => {
         if (key === "page" || key === "perPage") {
           await dispatch(
@@ -117,6 +108,7 @@ export default function List({
     funct();
   }, []);
 
+  // Debounce search query
   const debounce = _.debounce(() => sendQuery(true, false), 1000, {
     maxWait: 1000,
   });
@@ -285,7 +277,6 @@ export default function List({
           ) : (
             <Filters
               categories={categories}
-              maxCookingTime={maxCookingTime}
               sendQuery={sendQuery}
               defaults={FILTER_DEFAULTS}
             />
@@ -353,16 +344,11 @@ export async function getServerSideProps(props) {
   try {
     const { data: categoriesResult, error: categoriesError } =
       await client.query({ query: CATEGORIES });
-    const { data: maxCookingTimeResult, error: maxCookingError } =
-      await client.query({
-        query: MAX_COOKING_TIME,
-      });
 
     return {
       props: {
         categories: categoriesResult.categories,
-        maxCookingTime: maxCookingTimeResult.recipes[0].cooking_time,
-        errors: categoriesError || maxCookingError || null,
+        errors: categoriesError || null,
       },
     };
   } catch (err) {

@@ -6,7 +6,7 @@ export const listSlice = createSlice({
     filters: {
       search: "",
       categories: [],
-      cookingTime: [1, 1615],
+      cookingTime: [1, 2000],
       ingredients: [],
       rating: [0, 5],
       author: "",

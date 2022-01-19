@@ -12,7 +12,7 @@ import { useRouter } from "next/router";
 import { useSelector } from "react-redux";
 import { getFilters, getRerenderFilters } from "../../../state/listSlice";
 
-export default function Filters({ categories, maxCookingTime }) {
+export default function Filters({ categories }) {
   let state = {};
   const router = useRouter();
   const filters = useSelector(getFilters);
@@ -44,10 +44,7 @@ export default function Filters({ categories, maxCookingTime }) {
           <RatingFilter value={filters.rating} />
         </Panel>
         <Panel header="Cooking Time" key="cookingtime">
-          <CookingTimeFilter
-            value={filters.cookingTime}
-            maxCookingTime={maxCookingTime}
-          />
+          <CookingTimeFilter value={filters.cookingTime} />
         </Panel>
         <Panel header="Ingredients" key="ingredients">
           <IngredientsFilter defaultIngredients={filters.ingredients} />
