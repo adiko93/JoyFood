@@ -1,6 +1,6 @@
 import AuthLayout from "../../components/User/AuthLayout";
 import styles from "../../styles/User/Login.module.css";
-import { Form, Input, Button, Checkbox } from "antd";
+import { Form, Input, Button, Checkbox, Result } from "antd";
 import { MailOutlined, LockOutlined } from "@ant-design/icons";
 import OauthButton from "../../components/UI/OauthButton";
 import SVG from "../../utility/Svg";
@@ -12,6 +12,7 @@ import {
   getRememberState,
   logIn,
   isLoading,
+  getIsAuthorized,
 } from "../../state/authSlice";
 import { useRouter } from "next/router";
 
@@ -19,6 +20,7 @@ export default function Login() {
   const dispatch = useDispatch();
   const rememberState = useSelector(getRememberState);
   const loadingState = useSelector(isLoading);
+  const isAuthorized = useSelector(getIsAuthorized);
   const router = useRouter();
 
   const eventHandler = async (event) => {
@@ -31,6 +33,30 @@ export default function Login() {
     );
     router.replace("/");
   };
+
+  if (isAuthorized) {
+    return (
+      <Layout title="Log In" activeNav="home">
+        <div className={styles.container}>
+          <Result
+            style={{ width: "100%", alignSelf: "center" }}
+            status="success"
+            title="You are already logged in"
+            subTitle={`You can enjoy all the features`}
+            extra={[
+              <Button
+                onClick={() => {
+                  router.push("/");
+                }}
+              >
+                Go home
+              </Button>,
+            ]}
+          ></Result>
+        </div>
+      </Layout>
+    );
+  }
 
   return (
     <Layout title="Log in" activeNav="login">

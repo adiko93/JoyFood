@@ -3,8 +3,26 @@ import { MailOutlined, LockOutlined } from "@ant-design/icons";
 import OauthButton from "../UI/OauthButton";
 import SVG from "../../utility/Svg";
 import style from "../../styles/Home/Login.module.css";
+import { useDispatch, useSelector } from "react-redux";
+import { getIsAuthorized, logIn } from "../../state/authSlice";
+import { useRouter } from "next/router";
 
 export default function LoginBox(props) {
+  const dispatch = useDispatch();
+  const isAuthorized = useSelector(getIsAuthorized);
+  const router = useRouter();
+
+  const eventHandler = async (event) => {
+    await dispatch(
+      logIn({
+        email: event.email,
+        password: event.password,
+        remember: event.remember,
+      })
+    );
+  };
+  if (isAuthorized) return null;
+
   return (
     <div className={style.loginBox}>
       <div className={style.loginTitle}>Log In</div>
@@ -15,7 +33,7 @@ export default function LoginBox(props) {
         name="normal_login"
         className={style.login_form}
         initialValues={{ remember: true }}
-        onFinish=""
+        onFinish={eventHandler}
         style={{ marginTop: "1.5rem", marginBottom: ".1rem" }}
       >
         <Form.Item
@@ -63,7 +81,8 @@ export default function LoginBox(props) {
             Log in
           </Button>
           <br />
-          Don't have an account? <a href="">Register now!</a>
+          Don't have an account?{" "}
+          <a onClick={() => router.push("/user/register")}>Register now!</a>
         </Form.Item>
       </Form>
       <div className={style.oauth}>

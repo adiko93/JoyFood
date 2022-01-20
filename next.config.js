@@ -1,7 +1,8 @@
 // next.config.js
 const withAntdLess = require("next-plugin-antd-less");
+const withPlugins = require("next-compose-plugins");
 
-module.exports = withAntdLess({
+const pluginAntdLess = withAntdLess({
   // optional
   modifyVars: {
     "@primary-color": "#FA9400",
@@ -10,14 +11,30 @@ module.exports = withAntdLess({
     "@font-family": '"Open Sans", sans-serif',
     "@rate-star-bg": "#DFDFDF",
   },
-  //   // optional
-  //   lessVarsFilePath: "./src/styles/variables.less",
-  //   // optional
-  //   lessVarsFilePathAppendToEndOfContent: false,
+  lessVarsFilePath: "./styles/variables.less",
+
+  lessVarsFilePathAppendToEndOfContent: false,
   //   // optional https://github.com/webpack-contrib/css-loader#object
   //   cssLoaderOptions: {},
-
+  cssLoaderOptions: {
+    // ...
+    mode: "local",
+    exportOnlyLocals: false,
+    // ...
+    getLocalIdent: (context, localIdentName, localName, options) => {
+      return "whatever_random_class_name";
+    },
+  },
+  nextjs: {
+    localIdentNameFollowDev: true, // default false, for easy to debug on PROD mode
+  },
   // Other Config Here...
+});
+
+module.exports = withPlugins([[pluginAntdLess]], {
+  webpack(config, { buildId, dev, isServer, defaultLoaders, webpack }) {
+    return config;
+  },
   images: {
     domains: [
       "localhost",
@@ -27,7 +44,11 @@ module.exports = withAntdLess({
       "admin.joyfood.ga",
     ],
   },
-  webpack(config, { buildId, dev, isServer, defaultLoaders, webpack }) {
-    return config;
-  },
+  // images: {
+  //   disableStaticImages: true,
+  // },
+  // NextFuture
+  // future: {
+  //   webpack5: true,
+  // },
 });

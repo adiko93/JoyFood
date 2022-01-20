@@ -7,7 +7,7 @@ import {
 import { SITE_BACKEND_URL } from "../utility/globals";
 import { TokenRefreshLink } from "apollo-link-token-refresh";
 import { store } from "../state/store";
-import { refreshJWT } from "../state/authSlice";
+import { logOut, refreshJWT } from "../state/authSlice";
 
 const customFetch = async (uri, options) => {
   return fetch(uri, {
@@ -70,7 +70,10 @@ const client = new ApolloClient({
         return data.json();
       },
       handleResponse: (operation, accessTokenField) => async (response) => {
-        if (!response) return { newToken: null };
+        if (!response.data?.auth_refresh) {
+          store.dispatch(logOut());
+          return { newToken: null };
+        }
         store.dispatch(refreshJWT(response.data?.auth_refresh));
 
         return { newToken: response.data?.refreshUserToken?.token };
