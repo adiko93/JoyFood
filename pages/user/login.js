@@ -1,6 +1,6 @@
 import AuthLayout from "../../components/User/AuthLayout";
 import styles from "../../styles/User/Login.module.css";
-import { Form, Input, Button, Checkbox, notification } from "antd";
+import { Form, Input, Button, Checkbox } from "antd";
 import { MailOutlined, LockOutlined } from "@ant-design/icons";
 import OauthButton from "../../components/UI/OauthButton";
 import SVG from "../../utility/Svg";
@@ -12,16 +12,13 @@ import {
   getRememberState,
   logIn,
   isLoading,
-  getJWTState,
 } from "../../state/authSlice";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
 
 export default function Login() {
   const dispatch = useDispatch();
   const rememberState = useSelector(getRememberState);
   const loadingState = useSelector(isLoading);
-  const jwtState = useSelector(getJWTState);
   const router = useRouter();
 
   const eventHandler = async (event) => {
@@ -32,6 +29,7 @@ export default function Login() {
         remember: event.remember,
       })
     );
+    router.replace("/");
   };
 
   return (

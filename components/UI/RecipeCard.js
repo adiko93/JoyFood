@@ -3,7 +3,7 @@ import style from "../../styles/UI/RecipeCard.module.css";
 import SVG from "../../utility/Svg";
 import Image from "next/image";
 import _ from "lodash";
-import ClampLines from "react-clamp-lines";
+import Clamp from "react-multiline-clamp";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -36,13 +36,9 @@ export default function RecipeCard({ recipe }) {
 
       <div className={style.descriptionBox}>
         <div className={style.title}>
-          <ClampLines
-            text={recipe.title}
-            id="really-unique-id"
-            lines={2}
-            ellipsis="..."
-            buttons={false}
-          ></ClampLines>
+          <Clamp lines={2} withToggle={false}>
+            {recipe.title}
+          </Clamp>
         </div>
 
         <div className={style.stats}>

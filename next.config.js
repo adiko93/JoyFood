@@ -1,7 +1,5 @@
 // next.config.js
 const withAntdLess = require("next-plugin-antd-less");
-const path = require("path");
-const lessToJS = require("less-vars-to-js");
 
 module.exports = withAntdLess({
   // optional
@@ -32,5 +30,4 @@ module.exports = withAntdLess({
   webpack(config, { buildId, dev, isServer, defaultLoaders, webpack }) {
     return config;
   },
-
 });

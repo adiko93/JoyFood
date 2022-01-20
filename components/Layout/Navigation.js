@@ -1,24 +1,44 @@
-import { Input, Menu } from "antd";
+import { Input, Menu, Spin } from "antd";
 import styles from "../../styles/Layout/Navigation.module.css";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { rerenderFilters, rerenderFiltersFalse } from "../../state/listSlice";
+import { getIsAuthorized, isLoading } from "../../state/authSlice";
+import { useEffect } from "react";
+import { useLazyQuery } from "@apollo/client";
+import { USER_DETAILS } from "../../apollo/queries";
+import Avatar from "antd/lib/avatar/avatar";
+import { UserOutlined } from "@ant-design/icons";
+import { SITE_BACKEND_URL } from "../../utility/globals";
 const { Search } = Input;
 
 export default function Navigation({ active }) {
   const router = useRouter();
   const dispatch = useDispatch();
+  const loginLoading = useSelector(isLoading);
+  const isAuthorized = useSelector(getIsAuthorized);
+  const [fetchUserDetails, { data, error, loading }] =
+    useLazyQuery(USER_DETAILS);
 
-  //  <>
-  //           <Menu.Item style={{ fontWeight: "600" }}>
-  //             <Avatar
-  //               src={`${SITE_BACKEND_URL}/assets/${data?.users_me?.avatar.id}`}
-  //               style={{ marginRight: "1rem" }}
-  //             ></Avatar>
-  //             <Link href="/">{String(data?.users_me?.nickname)}</Link>
-  //           </Menu.Item>
-  //         </>
+  useEffect(() => {
+    if (isAuthorized) {
+      fetchUserDetails({
+        context: {
+          clientName: "system",
+        },
+      });
+      console.log(data);
+    }
+  }, [isAuthorized]);
+
+  const avatarProps = data?.users_me?.avatar.id
+    ? {
+        src: `${SITE_BACKEND_URL}/assets/${data?.users_me?.avatar.id}`,
+      }
+    : {
+        icon: <UserOutlined />,
+      };
 
   return (
     <>
@@ -56,9 +76,17 @@ export default function Navigation({ active }) {
                   Recipes
                 </Link>
               </Menu.Item>
-              <Menu.Item key="login">
-                <Link href="/user/login">Log In</Link>
-              </Menu.Item>
+
+              {isAuthorized ? (
+                <Menu.Item style={{ fontWeight: "600" }}>
+                  <Avatar {...avatarProps} style={{ marginRight: "1rem" }} />
+                  <Link href="/">{String(data?.users_me?.nickname)}</Link>
+                </Menu.Item>
+              ) : (
+                <Menu.Item key="login">
+                  <Link href="/user/login">Log In</Link>
+                </Menu.Item>
+              )}
             </Menu>
           </div>
         </div>
