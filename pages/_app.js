@@ -4,6 +4,7 @@ import { store } from "../state/store";
 import client from "../apollo/client";
 import { Provider } from "react-redux";
 import { ApolloProvider } from "@apollo/client";
+import "../styles/variables.less";
 
 function MyApp({ Component, pageProps }) {
   return (
