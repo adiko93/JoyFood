@@ -1,0 +1,21 @@
+.title {
+  /* position: relative; */
+  margin-right: 20px;
+}
+
+.editIcon {
+  position: absolute;
+  transform: translateX(8px);
+  right: 0px;
+  bottom: 8.5px;
+}
+
+.icon {
+  color: rgb(163, 163, 163);
+  font-size: 13px;
+  transition: all 0.5s;
+}
+
+.icon:hover {
+  color: #000;
+}

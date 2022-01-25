@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { useEmblaCarousel } from "embla-carousel/react";
+import useEmblaCarousel from "embla-carousel-react";
 import styles from "../../../styles/UI/RecipeCarousel/RecipeCarousel.module.css";
 import { Image } from "antd";
 

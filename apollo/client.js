@@ -80,7 +80,10 @@ const client = new ApolloClient({
       },
     }),
     ApolloLink.split(
-      (operation) => operation.getContext().clientName === "system",
+      (operation) => {
+        console.log("triggered ", operation.getContext());
+        return operation.getContext().clientName === "system";
+      },
       systemHttpLink,
       httpLink
     ),

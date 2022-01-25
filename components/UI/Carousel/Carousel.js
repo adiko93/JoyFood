@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { PrevButton, NextButton } from "./Buttons";
-import { useEmblaCarousel } from "embla-carousel/react";
+import useEmblaCarousel from "embla-carousel-react";
 import style from "../../../styles/UI/Carousel/Carousel.module.css";
 
 const Carousel = (props) => {

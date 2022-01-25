@@ -1,0 +1,37 @@
+.tabContainer {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: repeat(5, 1fr);
+  grid-auto-flow: column;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 5fr 0.5fr;
+  grid-column-gap: 10px;
+  grid-row-gap: 10px;
+  grid-auto-flow: row;
+  align-items: center;
+}
+
+.inputIngredient {
+  flex-grow: 1;
+}
+.container {
+  padding-inline: 10px;
+}
+.bottomNavigation {
+  display: flex;
+  align-content: center;
+  justify-content: space-between;
+}
+.pagination {
+  justify-self: right;
+  align-self: center;
+}
+.minusIcon {
+  justify-self: center;
+  align-self: center;
+  margin-bottom: 10px;
+  transform: translateX(-8px);
+}

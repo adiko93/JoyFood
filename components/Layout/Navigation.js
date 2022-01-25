@@ -33,7 +33,6 @@ export default function Navigation({ active }) {
           clientName: "system",
         },
       });
-      console.log(data);
     }
   }, [isAuthorized]);
 
@@ -107,7 +106,6 @@ export default function Navigation({ active }) {
               mode="horizontal"
               disabledOverflow={true}
               style={{ minWidth: "200px" }}
-              inlineCollapsed={false}
             >
               <Menu.Item key="home">
                 <Link href="/">Home</Link>
