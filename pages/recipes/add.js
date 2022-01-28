@@ -4,30 +4,66 @@ import {
   TeamOutlined,
   ClockCircleOutlined,
   ShoppingCartOutlined,
+  PlusOutlined,
+  MinusOutlined,
 } from "@ant-design/icons";
-import { Button, Checkbox, Rate, Tag } from "antd";
+import { Button, Divider, Input, InputNumber, Rate, Select, Tag } from "antd";
 import Layout from "../../components/Layout/Layout";
 import Avatar from "antd/lib/avatar/avatar";
 import Link from "next/link";
 import SVG from "../../utility/Svg";
-import UploadRecipeCarousel from "../../components/UI/RecipeCarousel/UploadRecipeCarousel";
 import DynamicTabs from "../../components/Recipe/Add/DynamicTabs";
 import DynamicList from "../../components/Recipe/Add/DynamicList";
 import PicturesWall from "../../components/Recipe/Add/PicturesWall";
+import { useState } from "react";
+import EditableField from "../../components/UI/EditableField";
+import _ from "lodash";
+import DynamicSteps from "../../components/Recipe/Add/DynamicSteps";
 
 function AddRecipe() {
+  const [title, setTitle] = useState("Click here to change title");
+  const [description, setDescription] = useState();
+  const [cookingTime, setCookingTime] = useState(60);
+  const [servings, setServings] = useState(4);
+  const [imagesList, setImagesList] = useState([]);
+  const [steps, setSteps] = useState([
+    {
+      title: "Click here to change category title",
+      steps: [{ description: "", image: [] }],
+    },
+  ]);
+
+  const { Option } = Select;
+
   return (
     <Layout title="Add recipe" activeNav="recipes">
       <div className={styles.header}>
-        <PicturesWall />
+        <div>
+          <span className={styles.imagesTitle}>Images</span>
+          <PicturesWall
+            fileList={imagesList}
+            setFileList={(files) => setImagesList(files)}
+          />
+        </div>
         <div className={styles.details}>
           <div className={styles.title}>
-            Your recipe title
-            <span className={styles.categories}>
-              <Tag key={1} color="#FA9400">
-                Your category here
-              </Tag>
-            </span>
+            <EditableField
+              textClass={styles.title}
+              value={title}
+              changeHandler={setTitle}
+              minLength={5}
+            />
+            <div className={styles.categories}>
+              <Select
+                mode="multiple"
+                allowClear
+                placeholder="Please select categories"
+                style={{ width: "100%" }}
+              >
+                <Option key="1">Test</Option>
+                <Option key="2">Test2</Option>
+              </Select>
+            </div>
           </div>
 
           <div className={styles.ratingAuthor}>
@@ -37,7 +73,7 @@ function AddRecipe() {
                 defaultValue={5}
                 style={{ fontSize: "18px", paddingRight: "5px" }}
               />
-              3.5 (100 votes)
+              5 (100 votes)
             </div>
             <div className={styles.author}>
               <Avatar
@@ -50,11 +86,22 @@ function AddRecipe() {
               by <Link href="/">Martha</Link>
             </div>
           </div>
-          <div className={styles.description}>Your description here</div>
+          <div className={styles.description}>
+            <Input.TextArea
+              value={description}
+              onChange={(value) => setDescription(value.target.value)}
+              style={{ minHeight: "20rem" }}
+              placeholder="Your description here"
+            />
+          </div>
           <div className={styles.stats}>
             <div className={styles.clock}>
               <ClockCircleOutlined />
-              25 hours 5 minutes
+              <InputNumber
+                min={1}
+                value={cookingTime}
+                onChange={(event) => setCookingTime(event)}
+              />
               {/* {minutesToHours(recipe.cooking_time)} */}
             </div>
             <div className={styles.clockDesc}>Cooking time</div>
@@ -63,7 +110,12 @@ function AddRecipe() {
             </div>
             <div className={styles.ingrDesc}>Ingredients</div>
             <div className={styles.serv}>
-              <TeamOutlined />0
+              <TeamOutlined />
+              <InputNumber
+                min={1}
+                value={servings}
+                onChange={(event) => setServings(event)}
+              />
             </div>
             <div className={styles.servDesc}>Servings</div>
           </div>
@@ -72,7 +124,9 @@ function AddRecipe() {
       <div className={styles.ingredientsContainer}>
         <div className={styles.ingredientsTitle}>Ingredients:</div>
         <div className={styles.ingredientsList}>
-          <DynamicTabs>{(test) => <DynamicList test={test} />}</DynamicTabs>
+          <DynamicTabs>
+            {(test) => <DynamicList test={test} size="large" />}
+          </DynamicTabs>
         </div>
         <Button
           type="primary"
@@ -88,12 +142,9 @@ function AddRecipe() {
           Add to cart
         </Button>
       </div>
-      <div className={styles.stepsContainer}>
-        <div className={styles.stepsStep} key="1">
-          <div className={styles.stepsNumber}>1</div>
-          <div className={styles.stepsDescription}>blahblahblah</div>
-        </div>
-      </div>
+      {/* /////////////////// STEPS /////////////////////////////////// */}
+
+      <DynamicSteps steps={steps} setSteps={setSteps} />
     </Layout>
   );
 }

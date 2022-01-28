@@ -14,6 +14,7 @@ import {
   BellOutlined,
   MailOutlined,
   LogoutOutlined,
+  PlusOutlined,
 } from "@ant-design/icons";
 import { SITE_BACKEND_URL } from "../../utility/globals";
 const { Search } = Input;
@@ -46,6 +47,10 @@ export default function Navigation({ active }) {
 
   const menu = (
     <Menu>
+      <Menu.Item icon={<PlusOutlined />}>
+        <Link href="/recipes/add">Add Recipe</Link>
+      </Menu.Item>
+      <Menu.Divider />
       <Menu.Item icon={<UserOutlined />}>
         <a
           target="_blank"
@@ -124,9 +129,9 @@ export default function Navigation({ active }) {
 
               {isAuthorized ? (
                 <Dropdown overlay={menu} placement="bottomRight">
-                  <Menu.Item style={{ fontWeight: "600" }}>
+                  <Menu.Item style={{ fontWeight: "600" }} key="login">
                     <Avatar {...avatarProps} style={{ marginRight: "1rem" }} />
-                    <Link href="/">{String(data?.users_me?.nickname)}</Link>
+                    {String(data?.users_me?.nickname)}
                   </Menu.Item>
                 </Dropdown>
               ) : (

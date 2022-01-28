@@ -1,0 +1,96 @@
+.stepsContainer {
+  background-color: #f7f7f7;
+  padding: 4rem 0 2rem 5rem;
+  transition: all 2s linear;
+}
+.stepsStep {
+  display: flex;
+  margin-bottom: 1rem;
+  align-items: center;
+  background-color: white;
+  border-radius: 2rem;
+  padding: 2rem;
+  margin-right: 5rem;
+}
+
+.stepsNumber {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  width: 6.6rem;
+  height: 6.6rem;
+  font-weight: 700;
+  position: relative;
+  color: rgb(93, 93, 93);
+  margin-bottom: 1rem;
+
+  border: 5px solid #fa9400;
+  border-radius: 50%;
+}
+.stepsDescription {
+  font-size: 1.6rem;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.stepsArrowUp {
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-left: 15px solid transparent;
+  border-right: 15px solid transparent;
+
+  border-bottom: 9px solid rgb(195, 195, 195);
+  transform: translateY(-2rem);
+}
+.stepsArrowUpActive {
+  border-bottom: 9px solid #fa9400;
+}
+.stepsArrowUpActive:hover {
+  cursor: pointer;
+}
+.stepsArrowDown {
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-left: 15px solid transparent;
+  border-right: 15px solid transparent;
+
+  border-top: 9px solid rgb(195, 195, 195);
+  transform: translateY(2rem);
+}
+.stepsArrowDownActive {
+  border-top: 9px solid #fa9400;
+}
+.stepsArrowDownActive:hover {
+  cursor: pointer;
+}
+.stepsPictureUpload {
+  width: max-content;
+  margin-left: 2rem;
+}
+
+.stepsAddNewStep {
+  width: 30rem;
+  align-self: center;
+}
+.categoryTitle {
+  font-size: 3.6rem;
+  font-weight: 700;
+  color: #fa9400;
+  line-height: 7rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.stepsLeftContainter {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-right: 2rem;
+}

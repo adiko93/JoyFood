@@ -44,7 +44,10 @@ export const authSlice = createSlice({
       state.JWTToken = action.payload;
     },
     refreshJWT: (state, action) => {
-      state.JWTToken = action.payload.access_token;
+      (state.JWTToken = action.payload.access_token),
+        {
+          expires: (1 / 24 / 60) * 15,
+        };
       state.refreshToken = action.payload.refresh_token;
       state.expire = new Date().getTime() + action.payload.expires;
       Cookie.set("jwt", action.payload.access_token);
@@ -84,7 +87,9 @@ export const authSlice = createSlice({
       state.refreshToken = action.payload.auth_login.refresh_token;
       state.expire = new Date().getTime() + action.payload.auth_login.expires;
       // state.refreshToken = action.payload.auth_login.refresh_token;
-      Cookie.set("jwt", action.payload.auth_login.access_token);
+      Cookie.set("jwt", action.payload.auth_login.access_token, {
+        expires: (1 / 24 / 60) * 15,
+      });
       Cookie.set("refreshToken", action.payload.auth_login.refresh_token, {
         expires: state.remember
           ? 7

@@ -34,3 +34,11 @@ export const REFRESH_TOKEN = gql`
     }
   }
 `;
+
+export const DELETE_FILE = gql`
+  mutation DeleteFile($id: ID!) {
+    delete_files_item(id: $id) {
+      id
+    }
+  }
+`;

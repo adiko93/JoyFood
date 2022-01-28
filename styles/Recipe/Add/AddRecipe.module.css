@@ -42,22 +42,30 @@
   grid-row: 3/6;
 } */
 .header {
-  display: flex;
+  display: grid;
   grid-template-columns: 1fr 1fr;
   background-color: #f7f7f7;
   flex-wrap: wrap;
-  justify-content: center;
+  padding-left: 20px;
 }
 .details {
   padding: 2rem;
   width: 1fr;
+  max-width: 100em;
   flex: 1 1 400px;
+  overflow: hidden;
 }
 .title {
   font-size: 3.6rem;
   font-weight: 700;
   color: #fa9400;
   line-height: 4.8rem;
+}
+.imagesTitle {
+  font-size: 3.6rem;
+  font-weight: 700;
+  color: #fa9400;
+  line-height: 7rem;
 }
 
 .ratingAuthor {
@@ -87,9 +95,8 @@
   color: #fa9400;
 }
 .categories {
-  display: inline-block;
   padding-left: 0.5rem;
-  transform: translateY(-7px);
+  width: 100%;
 }
 
 .description {
@@ -163,31 +170,4 @@
   font-size: 3.7rem;
   font-weight: 700;
   padding: 2rem 0 1.5rem 2rem;
-}
-
-.stepsContainer {
-  background-color: #f7f7f7;
-  padding: 4rem 0 2rem 5rem;
-}
-.stepSstep {
-  display: flex;
-  margin-bottom: 4rem;
-  align-items: center;
-}
-.stepsNumber {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 2.5rem;
-  width: 5.6rem;
-  height: 5.6rem;
-  font-weight: 700;
-
-  border: 5px solid #fa9400;
-  border-radius: 50%;
-  margin-right: 2rem;
-}
-.stepsDescription {
-  font-size: 1.6rem;
-  width: 70%;
 }

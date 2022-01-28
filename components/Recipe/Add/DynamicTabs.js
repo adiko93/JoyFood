@@ -82,7 +82,7 @@ function DynamicTabs(props) {
   };
 
   const add = function () {
-    const newTabIndex = tabIndex++;
+    const newTabIndex = tabIndex + 1;
     const newPanes = [...panes];
     newPanes.push({
       title: "New Tab",

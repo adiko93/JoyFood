@@ -1,6 +1,12 @@
-import { Upload, Modal } from "antd";
+import { Upload, Modal, message } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
-import React from "react";
+import React, { useState } from "react";
+import { useSelector } from "react-redux";
+import { getJWTState } from "../../../state/authSlice";
+import { SITE_BACKEND_URL } from "../../../utility/globals";
+import { useLazyQuery, useMutation } from "@apollo/client";
+import { USER_DETAILS } from "../../../apollo/queries";
+import { DELETE_FILE } from "../../../apollo/mutations";
 
 function getBase64(file) {
   return new Promise((resolve, reject) => {
@@ -11,98 +17,94 @@ function getBase64(file) {
   });
 }
 
-class PicturesWall extends React.Component {
-  state = {
-    previewVisible: false,
-    previewImage: "",
-    previewTitle: "",
-    fileList: [
-      {
-        uid: "-1",
-        name: "image.png",
-        status: "done",
-        url: "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png",
-      },
-      {
-        uid: "-2",
-        name: "image.png",
-        status: "done",
-        url: "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png",
-      },
-      {
-        uid: "-3",
-        name: "image.png",
-        status: "done",
-        url: "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png",
-      },
-      {
-        uid: "-4",
-        name: "image.png",
-        status: "done",
-        url: "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png",
-      },
-      {
-        uid: "-xxx",
-        percent: 50,
-        name: "image.png",
-        status: "uploading",
-        url: "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png",
-      },
-      {
-        uid: "-5",
-        name: "image.png",
-        status: "error",
-      },
-    ],
-  };
+function PicturesWall({ maxImages = "10", fileList, setFileList }) {
+  const [previewVisible, setPreviewVisible] = useState(false);
+  const [previewImage, setPreviewImage] = useState("");
+  const [previewTitle, setPreviewTitle] = useState("");
+  const [fetchUserDetails, { data, error, loading }] = useLazyQuery(
+    USER_DETAILS,
+    {
+      fetchPolicy: "network-only",
+    }
+  );
+  const [deleteFileQuery, { error: errorDelete }] = useMutation(DELETE_FILE);
+  const JWTToken = useSelector(getJWTState);
 
-  handleCancel = () => this.setState({ previewVisible: false });
+  const handleCancel = () => setPreviewVisible(false);
 
-  handlePreview = async (file) => {
+  const handlePreview = async (file) => {
     if (!file.url && !file.preview) {
       file.preview = await getBase64(file.originFileObj);
     }
 
-    this.setState({
-      previewImage: file.url || file.preview,
-      previewVisible: true,
-      previewTitle:
-        file.name || file.url.substring(file.url.lastIndexOf("/") + 1),
-    });
+    setPreviewImage(file.url || file.preview);
+    setPreviewVisible(true);
+    setPreviewTitle(
+      file.name || file.url.substring(file.url.lastIndexOf("/") + 1)
+    );
   };
 
-  handleChange = ({ fileList }) => this.setState({ fileList });
+  const handleChange = ({ fileList }) => {
+    setFileList(fileList);
+  };
 
-  render() {
-    const { previewVisible, previewImage, fileList, previewTitle } = this.state;
-    const uploadButton = (
-      <div>
-        <PlusOutlined />
-        <div style={{ marginTop: 8 }}>Upload</div>
-      </div>
-    );
-    return (
-      <>
-        <Upload
-          action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-          listType="picture-card"
-          fileList={fileList}
-          onPreview={this.handlePreview}
-          onChange={this.handleChange}
-        >
-          {fileList.length >= 8 ? null : uploadButton}
-        </Upload>
-        <Modal
-          visible={previewVisible}
-          title={previewTitle}
-          footer={null}
-          onCancel={this.handleCancel}
-        >
-          <img alt="example" style={{ width: "100%" }} src={previewImage} />
-        </Modal>
-      </>
-    );
-  }
+  const removeHandler = async (file) => {
+    await deleteFileQuery({
+      context: {
+        clientName: "system",
+      },
+      variables: {
+        id: file.response.data.id,
+      },
+    });
+    if (errorDelete) {
+      message.error(
+        "There was a problem connecting to the database, please relogin"
+      );
+      return false;
+    }
+    return true;
+  };
+
+  const uploadButton = (
+    <div
+      onClick={async () => {
+        //refresh token
+        await fetchUserDetails({
+          context: {
+            clientName: "system",
+          },
+        });
+      }}
+    >
+      <PlusOutlined />
+      <div style={{ marginTop: 8 }}>Upload</div>
+    </div>
+  );
+  return (
+    <>
+      <Upload
+        name="file"
+        action={`${SITE_BACKEND_URL}/files?access_token=${JWTToken}`}
+        listType="picture-card"
+        fileList={fileList}
+        onPreview={handlePreview}
+        onChange={handleChange}
+        onRemove={(file) => removeHandler(file)}
+        key="testfasf"
+      >
+        {fileList.length >= maxImages ? null : uploadButton}
+      </Upload>
+      <Modal
+        visible={previewVisible}
+        title={previewTitle}
+        footer={null}
+        onCancel={handleCancel}
+      >
+        <img alt="example" style={{ width: "100%" }} src={previewImage} />
+      </Modal>
+    </>
+  );
 }
 
 export default PicturesWall;
