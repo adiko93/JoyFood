@@ -38,7 +38,10 @@ const client = new ApolloClient({
     new TokenRefreshLink({
       isTokenValidOrUndefined: () => {
         // Check if JWT token is unindetified
-        if (!store.getState().auth.JWTToken) {
+        if (
+          !store.getState().auth.JWTToken &&
+          !store.getState().auth.refreshToken
+        ) {
           return true;
         }
         if (store.getState().auth.expire - new Date().getTime() >= 0) {
@@ -80,10 +83,7 @@ const client = new ApolloClient({
       },
     }),
     ApolloLink.split(
-      (operation) => {
-        console.log("triggered ", operation.getContext());
-        return operation.getContext().clientName === "system";
-      },
+      (operation) => operation.getContext().clientName === "system",
       systemHttpLink,
       httpLink
     ),

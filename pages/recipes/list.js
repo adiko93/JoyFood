@@ -51,7 +51,7 @@ export default function List({ categories = null, errors = null }) {
     { data: countData, error: countError, loading: countLoading },
   ] = useLazyQuery(FILTER_SEARCH_COUNT, {
     onCompleted: (data) => {
-      setItemsCount(data.recipes.length);
+      setItemsCount(data?.recipe.length || 0);
     },
   });
 
@@ -162,20 +162,21 @@ export default function List({ categories = null, errors = null }) {
     [filters, paginationState]
   );
 
+  // Send query
   useEffect(() => {
     let filterQueries = [];
-    if (router.query?.search)
-      router.query.search.split(" ").forEach((keyword) => {
-        filterQueries.push({
-          slug: { _contains: keyword.toLowerCase() },
-        });
-      });
+    // if (router.query?.search)
+    //   router.query.search.split(" ").forEach((keyword) => {
+    //     filterQueries.push({
+    //       slug: { _contains: keyword.toLowerCase() },
+    //     });
+    //   });
 
     if (router.query?.categories)
       router.query.categories.split(",").forEach((category) => {
         filterQueries.push({
           categories: {
-            categories_id: {
+            category_id: {
               id: { _contains: category },
             },
           },
@@ -193,8 +194,10 @@ export default function List({ categories = null, errors = null }) {
     if (router.query?.ingredients)
       router.query.ingredients.split(",").forEach((ingredient) => {
         filterQueries.push({
-          ingredients: {
-            description: { _contains: ingredient },
+          ingredients_categories: {
+            ingredients: {
+              description: { _contains: ingredient },
+            },
           },
         });
       });
@@ -202,8 +205,8 @@ export default function List({ categories = null, errors = null }) {
       filterQueries.push({
         _or: [
           {
-            author: {
-              nickname: { _contains: router.query.author.toLowerCase() },
+            user_created: {
+              username: { _contains: router.query.author.toLowerCase() },
             },
           },
           { publisher: { _contains: router.query.author } },
@@ -213,6 +216,7 @@ export default function List({ categories = null, errors = null }) {
       queryCount({
         variables: {
           filters: filterQueries,
+          search: router.query?.search || null,
         },
       });
       queryRecipe({
@@ -220,6 +224,7 @@ export default function List({ categories = null, errors = null }) {
           filters: filterQueries,
           page: parseInt(router.query?.page || 1),
           perPage: parseInt(router.query?.perPage || perPageState),
+          search: router.query?.search || null,
         },
       });
     } catch (err) {
@@ -285,8 +290,8 @@ export default function List({ categories = null, errors = null }) {
               {getListTitle} (<span>{itemsCount}</span> found)
             </div>
             <div className={styles.recipes_list}>
-              {data?.recipes.length > 0 ? (
-                data?.recipes.map((recipe) => {
+              {data?.recipe.length > 0 ? (
+                data?.recipe.map((recipe) => {
                   return <RecipeCard recipe={recipe} key={recipe.slug} />;
                 })
               ) : (
@@ -336,7 +341,7 @@ export async function getServerSideProps(props) {
 
     return {
       props: {
-        categories: categoriesResult.categories,
+        categories: categoriesResult.category,
         errors: categoriesError || null,
       },
     };

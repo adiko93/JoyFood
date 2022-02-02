@@ -4,14 +4,20 @@ import { Button, Divider, Input } from "antd";
 import PicturesWall from "../../../components/Recipe/Add/PicturesWall";
 import EditableField from "../../../components/UI/EditableField";
 import _ from "lodash";
+import { useState } from "react";
 
 function DynamicSteps({ steps, setSteps }) {
+  const [categoryKey, setCategoryKey] = useState(1);
+  const [stepKey, setStepKey] = useState(1);
   const addCategoryHandler = (index) => {
     let newSteps = _.cloneDeep(steps);
+    const tempCategoryKey = categoryKey;
     newSteps.push({
       title: "Click here to change category title",
       steps: [{ description: "", image: [] }],
+      key: tempCategoryKey,
     });
+    setCategoryKey(tempCategoryKey + 1);
     setSteps(newSteps);
   };
 
@@ -28,11 +34,17 @@ function DynamicSteps({ steps, setSteps }) {
   };
 
   const addStepHandler = (categoryIndex) => {
+    const tempStepKey = stepKey;
     let newSteps = _.cloneDeep(steps).map((category, index) => {
       if (index === categoryIndex)
-        category.steps.push({ description: "", image: [] });
+        category.steps.push({
+          description: "",
+          image: [],
+          stepKey: tempStepKey,
+        });
       return category;
     });
+    setStepKey(tempStepKey + 1);
     setSteps(newSteps);
   };
   const removeCategory = (categoryIndex) => {
@@ -82,7 +94,7 @@ function DynamicSteps({ steps, setSteps }) {
   return steps.map((category, categoryIndex) => {
     return (
       <>
-        <div className={styles.stepsContainer}>
+        <div className={styles.stepsContainer} key={category.key}>
           {categoryIndex !== 0 ? <Divider type="horizontal" /> : null}
           <div className={styles.categoryTitle}>
             <EditableField
@@ -107,7 +119,7 @@ function DynamicSteps({ steps, setSteps }) {
           </div>
           {category.steps.map((step, index, currentArray) => {
             return (
-              <div className={styles.stepsStep} key={index}>
+              <div className={styles.stepsStep} key={step.key}>
                 <div className={styles.stepsLeftContainter}>
                   <div className={styles.stepsNumber}>
                     <div

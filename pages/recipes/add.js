@@ -4,10 +4,10 @@ import {
   TeamOutlined,
   ClockCircleOutlined,
   ShoppingCartOutlined,
-  PlusOutlined,
-  MinusOutlined,
+  DiffOutlined,
+  SendOutlined,
 } from "@ant-design/icons";
-import { Button, Divider, Input, InputNumber, Rate, Select, Tag } from "antd";
+import { Button, Input, InputNumber, Rate, Select } from "antd";
 import Layout from "../../components/Layout/Layout";
 import Avatar from "antd/lib/avatar/avatar";
 import Link from "next/link";
@@ -19,6 +19,13 @@ import { useState } from "react";
 import EditableField from "../../components/UI/EditableField";
 import _ from "lodash";
 import DynamicSteps from "../../components/Recipe/Add/DynamicSteps";
+import { useMutation } from "@apollo/client";
+import { ADD_RECIPE } from "../../apollo/mutations";
+import slugify from "slugify";
+import makeid from "../../utility/makeId";
+import { useSelector } from "react-redux";
+import { getNickname } from "../../state/authSlice";
+import { RECIPE_CATEGORIES } from "../../utility/recipeCategories";
 
 function AddRecipe() {
   const [title, setTitle] = useState("Click here to change title");
@@ -29,17 +36,115 @@ function AddRecipe() {
   const [steps, setSteps] = useState([
     {
       title: "Click here to change category title",
-      steps: [{ description: "", image: [] }],
+      steps: [{ description: "", image: [], stepKey: 0 }],
+      key: 0,
     },
   ]);
+  const [ingredients, setIngredients] = useState([
+    {
+      title: "Ingredients",
+      key: "1",
+      closable: false,
+      ingredients: [
+        {
+          key: 0,
+          quantity: null,
+          unit: null,
+          description: null,
+        },
+      ],
+    },
+  ]);
+  const [addRecipe, { data, error, loading }] = useMutation(ADD_RECIPE);
+  const [categories, setCategories] = useState([]);
+  const nicknameState = useSelector(getNickname);
 
   const { Option } = Select;
+
+  const addRecipeHandler = () => {
+    addRecipe({
+      variables: {
+        status: "Published",
+        title: title,
+        servings: servings,
+        publisher: nicknameState,
+        cookingTime: cookingTime,
+        description: description,
+        categories: categories.map((category) => {
+          return {
+            category_id: {
+              id: RECIPE_CATEGORIES[category].id,
+              title: RECIPE_CATEGORIES[category].title,
+            },
+          };
+        }),
+        steps: steps.map((category) => {
+          return {
+            title: category.title,
+            steps: category.steps.map((step) => {
+              return {
+                description: step.description,
+                image: step.image[0]
+                  ? {
+                      id: step.image[0].response.data.id,
+                      filename_disk: step.image[0].response.data.filename_disk,
+                      filename_download:
+                        step.image[0].response.data.filename_download,
+                      filesize: +step.image[0].response.data.filesize,
+                      height: step.image[0].response.data.height,
+                      id: step.image[0].response.data.id,
+                      modified_on: step.image[0].response.data.modified_on,
+                      storage: step.image[0].response.data.storage,
+                      title: step.image[0].response.data.title,
+                      type: step.image[0].response.data.type,
+                      uploaded_on: step.image[0].response.data.uploaded_on,
+                      width: step.image[0].response.data.width,
+                    }
+                  : null,
+              };
+            }),
+          };
+        }),
+        ingredients: ingredients.map((category) => {
+          return {
+            title: category.title,
+            ingredients: category.ingredients.map((ingredient) => {
+              return {
+                quantity: ingredient.quantity,
+                unit: ingredient.unit,
+                description: ingredient.description,
+              };
+            }),
+          };
+        }),
+        images: imagesList.map((image) => {
+          const img = image.response.data;
+          return {
+            directus_files_id: {
+              id: img.id,
+              filename_disk: img.filename_disk,
+              filename_download: img.filename_download,
+              filesize: +img.filesize,
+              height: img.height,
+              id: img.id,
+              modified_on: img.modified_on,
+              storage: img.storage,
+              title: img.title,
+              type: img.type,
+              uploaded_on: img.uploaded_on,
+              width: img.width,
+            },
+          };
+        }),
+      },
+    });
+  };
 
   return (
     <Layout title="Add recipe" activeNav="recipes">
       <div className={styles.header}>
         <div>
-          <span className={styles.imagesTitle}>Images</span>
+          <span className={styles.imagesTitle}>Images:</span>
           <PicturesWall
             fileList={imagesList}
             setFileList={(files) => setImagesList(files)}
@@ -59,9 +164,13 @@ function AddRecipe() {
                 allowClear
                 placeholder="Please select categories"
                 style={{ width: "100%" }}
+                onChange={(event) => setCategories(event)}
               >
-                <Option key="1">Test</Option>
-                <Option key="2">Test2</Option>
+                {RECIPE_CATEGORIES.map((category, index) => (
+                  <Option key={index} value={index}>
+                    {category.title}
+                  </Option>
+                ))}
               </Select>
             </div>
           </div>
@@ -124,8 +233,18 @@ function AddRecipe() {
       <div className={styles.ingredientsContainer}>
         <div className={styles.ingredientsTitle}>Ingredients:</div>
         <div className={styles.ingredientsList}>
-          <DynamicTabs>
-            {(test) => <DynamicList test={test} size="large" />}
+          <DynamicTabs
+            ingredients={ingredients}
+            setIngredients={setIngredients}
+          >
+            {(categoryKey) => (
+              <DynamicList
+                size="large"
+                categoryKey={categoryKey}
+                ingredients={ingredients}
+                setIngredients={setIngredients}
+              />
+            )}
           </DynamicTabs>
         </div>
         <Button
@@ -142,9 +261,26 @@ function AddRecipe() {
           Add to cart
         </Button>
       </div>
-      {/* /////////////////// STEPS /////////////////////////////////// */}
-
       <DynamicSteps steps={steps} setSteps={setSteps} />
+      <div className={styles.bottomNav}>
+        <Button
+          type="secondary"
+          size="large"
+          style={{ marginRight: "1rem" }}
+          icon={<DiffOutlined />}
+          onClick={() => console.log(steps)}
+        >
+          Save Draft
+        </Button>
+        <Button
+          type="primary"
+          size="large"
+          icon={<SendOutlined />}
+          onClick={() => addRecipeHandler()}
+        >
+          Send
+        </Button>
+      </div>
     </Layout>
   );
 }

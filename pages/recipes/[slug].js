@@ -26,12 +26,11 @@ export default function Recipe({ slug }) {
         }}
       />
     );
-  if (data.recipes.length === 0) {
+  if (data.recipe.length === 0 || error) {
     return <>No recipes found</>;
   }
-  const recipe = data.recipes[0];
+  const recipe = data.recipe[0];
 
-  console.log(recipe);
   return (
     <Layout title={recipe.title} activeNav="recipes">
       <Header recipe={recipe} />

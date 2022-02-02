@@ -2,25 +2,25 @@ import { gql } from "@apollo/client";
 
 export const CAROUSEL_RECIPES = gql`
   query recipesCarousel($category: String) {
-    recipes(
+    recipe(
       limit: 15
-      filter: { categories: { categories_id: { id: { _eq: $category } } } }
+      filter: { categories: { category_id: { id: { _eq: $category } } } }
     ) {
+      id
       title
       description
       cooking_time
-      slug
-      ingredients {
-        id
+      ingredients_categories {
+        title
+        ingredients {
+          id
+        }
       }
       servings
       images {
         directus_files_id {
           id
         }
-      }
-      author {
-        title
       }
       publisher
     }
@@ -29,42 +29,37 @@ export const CAROUSEL_RECIPES = gql`
 
 export const RECIPE = gql`
   query recipe($slugString: String) {
-    recipes(filter: { slug: { _eq: $slugString } }) {
+    recipe(filter: { id: { _eq: $slugString } }) {
       title
       servings
-      author {
-        title
-      }
       publisher
       cooking_time
       description
       categories {
-        categories_id {
+        category_id {
           title
         }
       }
-      ingredients {
-        quantity
-        description
-        unit
+      ingredients_categories {
+        title
+        ingredients {
+          quantity
+          description
+          unit
+        }
       }
-      steps {
-        description
-        sort
+      steps_categories {
+        title
+        steps {
+          description
+          image {
+            id
+          }
+        }
       }
       images {
         directus_files_id {
           id
-        }
-      }
-      reviews {
-        title
-        description
-        author {
-          title
-          avatar {
-            filename_disk
-          }
         }
       }
     }
@@ -73,7 +68,7 @@ export const RECIPE = gql`
 
 export const CATEGORIES = gql`
   query Categories {
-    categories {
+    category {
       id
       title
     }
@@ -93,14 +88,26 @@ export const CATEGORIES = gql`
 // `;
 
 export const FILTER_SEARCH = gql`
-  query FilterSearch($filters: [recipes_filter], $page: Int, $perPage: Int) {
-    recipes(filter: { _and: $filters }, limit: $perPage, page: $page) {
+  query FilterSearch(
+    $filters: [recipe_filter]
+    $page: Int
+    $perPage: Int
+    $search: String
+  ) {
+    recipe(
+      filter: { _and: $filters }
+      limit: $perPage
+      page: $page
+      search: $search
+    ) {
+      id
       title
-      slug
       description
       cooking_time
-      ingredients {
-        id
+      ingredients_categories {
+        ingredients {
+          id
+        }
       }
       servings
       images(limit: 1) {
@@ -108,18 +115,14 @@ export const FILTER_SEARCH = gql`
           id
         }
       }
-      author {
-        first_name
-        last_name
-      }
       publisher
     }
   }
 `;
 
 export const FILTER_SEARCH_COUNT = gql`
-  query FilterSearch($filters: [recipes_filter]) {
-    recipes(filter: { _and: $filters }, limit: 1000000) {
+  query FilterSearch($filters: [recipe_filter], $search: String) {
+    recipe(filter: { _and: $filters }, limit: 1000000, search: $search) {
       id
     }
   }
@@ -132,7 +135,7 @@ export const USER_DETAILS = gql`
         id
         filename_disk
       }
-      nickname
+      username
     }
   }
 `;

@@ -42,3 +42,54 @@ export const DELETE_FILE = gql`
     }
   }
 `;
+
+export const ADD_RECIPE = gql`
+  mutation AddRecipe(
+    $status: String!
+    $title: String!
+    $servings: Int!
+    $publisher: String
+    $cookingTime: Int!
+    $description: String
+    $categories: [create_recipe_category_input]
+    $ingredients: [create_ingredient_categories_input]
+    $steps: [create_steps_categories_input]
+    $images: [create_recipe_files_input]
+  ) {
+    create_recipe_item(
+      data: {
+        status: $status
+        title: $title
+        servings: $servings
+        publisher: $publisher
+        cooking_time: $cookingTime
+        description: $description
+        categories: $categories
+        ingredients_categories: $ingredients
+        steps_categories: $steps
+        images: $images
+      }
+    ) {
+      id
+      status
+      title
+      servings
+      publisher
+      cooking_time
+      description
+      categories {
+        id
+      }
+      ingredients_categories {
+        ingredients {
+          description
+        }
+      }
+      steps_categories {
+        steps {
+          description
+        }
+      }
+    }
+  }
+`;

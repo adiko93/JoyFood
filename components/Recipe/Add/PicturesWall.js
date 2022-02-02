@@ -25,9 +25,16 @@ function PicturesWall({ maxImages = "10", fileList, setFileList }) {
     USER_DETAILS,
     {
       fetchPolicy: "network-only",
+      context: {
+        clientName: "system",
+      },
     }
   );
-  const [deleteFileQuery, { error: errorDelete }] = useMutation(DELETE_FILE);
+  const [deleteFileQuery, { error: errorDelete }] = useMutation(DELETE_FILE, {
+    context: {
+      clientName: "system",
+    },
+  });
   const JWTToken = useSelector(getJWTState);
 
   const handleCancel = () => setPreviewVisible(false);
@@ -50,9 +57,6 @@ function PicturesWall({ maxImages = "10", fileList, setFileList }) {
 
   const removeHandler = async (file) => {
     await deleteFileQuery({
-      context: {
-        clientName: "system",
-      },
       variables: {
         id: file.response.data.id,
       },
@@ -91,7 +95,8 @@ function PicturesWall({ maxImages = "10", fileList, setFileList }) {
         onPreview={handlePreview}
         onChange={handleChange}
         onRemove={(file) => removeHandler(file)}
-        key="testfasf"
+        key="upload"
+        accept="image/png, image/gif, image/jpeg"
       >
         {fileList.length >= maxImages ? null : uploadButton}
       </Upload>

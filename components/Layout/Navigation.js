@@ -4,7 +4,12 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useDispatch, useSelector } from "react-redux";
 import { rerenderFilters, rerenderFiltersFalse } from "../../state/listSlice";
-import { getIsAuthorized, isLoading, logOut } from "../../state/authSlice";
+import {
+  getIsAuthorized,
+  isLoading,
+  logOut,
+  setNickname,
+} from "../../state/authSlice";
 import { useEffect } from "react";
 import { useLazyQuery } from "@apollo/client";
 import { USER_DETAILS } from "../../apollo/queries";
@@ -24,20 +29,26 @@ export default function Navigation({ active }) {
   const dispatch = useDispatch();
   const loginLoading = useSelector(isLoading);
   const isAuthorized = useSelector(getIsAuthorized);
-  const [fetchUserDetails, { data, error, loading }] =
-    useLazyQuery(USER_DETAILS);
+  const [fetchUserDetails, { data, error, loading }] = useLazyQuery(
+    USER_DETAILS,
+    {
+      context: {
+        clientName: "system",
+      },
+    }
+  );
 
   useEffect(() => {
     if (isAuthorized) {
-      fetchUserDetails({
-        context: {
-          clientName: "system",
-        },
-      });
+      fetchUserDetails();
     }
   }, [isAuthorized]);
 
-  const avatarProps = data?.users_me?.avatar.id
+  useEffect(() => {
+    dispatch(setNickname(data?.users_me?.username));
+  }, [data]);
+
+  const avatarProps = data?.users_me?.avatar?.id
     ? {
         src: `${SITE_BACKEND_URL}/assets/${data?.users_me?.avatar.id}`,
       }
@@ -128,12 +139,23 @@ export default function Navigation({ active }) {
               </Menu.Item>
 
               {isAuthorized ? (
-                <Dropdown overlay={menu} placement="bottomRight">
-                  <Menu.Item style={{ fontWeight: "600" }} key="login">
-                    <Avatar {...avatarProps} style={{ marginRight: "1rem" }} />
-                    {String(data?.users_me?.nickname)}
-                  </Menu.Item>
-                </Dropdown>
+                <Menu.Item style={{ fontWeight: "600" }} key="login">
+                  <Dropdown
+                    overlay={menu}
+                    placement="bottomLeft"
+                    key="login"
+                    style={{ transform: "translateX(-50px)" }}
+                  >
+                    <div>
+                      <Avatar
+                        {...avatarProps}
+                        style={{ marginRight: "1rem" }}
+                        suppressHydrationWarning={true}
+                      />
+                      {String(data?.users_me?.username)}
+                    </div>
+                  </Dropdown>
+                </Menu.Item>
               ) : (
                 <Menu.Item key="login">
                   <Link href="/user/login">Log In</Link>

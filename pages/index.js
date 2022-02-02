@@ -31,7 +31,7 @@ export default function Home({ dinnerProps, breakfastProps, dessertProps }) {
 }
 
 export async function getServerSideProps() {
-  const { data: dinnerRecipes } = await client.query({
+  const { data: dinnerRecipes, error } = await client.query({
     query: CAROUSEL_RECIPES,
     variables: {
       category: "dinner",
@@ -49,12 +49,13 @@ export async function getServerSideProps() {
       category: "dessert",
     },
   });
+  console.log(error);
 
   return {
     props: {
-      dinnerProps: dinnerRecipes.recipes,
-      breakfastProps: breakfastRecipes.recipes,
-      dessertProps: dessertRecipes.recipes,
+      dinnerProps: dinnerRecipes.recipe,
+      breakfastProps: breakfastRecipes.recipe,
+      dessertProps: dessertRecipes.recipe,
     },
   };
 }

@@ -25,7 +25,7 @@ export default function Header({ recipe }) {
             {recipe.categories.map((category, index) => {
               return (
                 <Tag key={index} color="#FA9400">
-                  {category.categories_id.title}
+                  {category.category_id.title}
                 </Tag>
               );
             })}
@@ -60,7 +60,12 @@ export default function Header({ recipe }) {
           </div>
           <div className={styles.clockDesc}>Cooking time</div>
           <div className={styles.ingr}>
-            <SVG id="#icon-ingredient" /> {recipe.ingredients.length}
+            <SVG id="#icon-ingredient" />{" "}
+            {recipe.ingredients_categories.reduce(
+              (previousValue, currentValue) =>
+                previousValue + currentValue.ingredients.length,
+              0
+            )}
           </div>
           <div className={styles.ingrDesc}>Ingredients</div>
           <div className={styles.serv}>

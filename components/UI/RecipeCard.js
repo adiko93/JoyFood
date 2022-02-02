@@ -4,16 +4,12 @@ import SVG from "../../utility/Svg";
 import Image from "next/image";
 import _ from "lodash";
 import Clamp from "react-multiline-clamp";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/router";
 import { SITE_BACKEND_URL } from "../../utility/globals";
 
 export default function RecipeCard({ recipe }) {
-  useEffect(() => {}, []);
   const [imageLoading, setImageLoading] = useState(true);
-  const router = useRouter();
-
   return (
     <div className={style.container}>
       <Spin
@@ -53,7 +49,7 @@ export default function RecipeCard({ recipe }) {
           <div className={style.author}>
             by{" "}
             <span className={style.color}>
-              {_.get(recipe, "author.title", recipe.publisher)}
+              {_.get(recipe, "publisher", recipe.publisher)}
             </span>
           </div>
         </div>
@@ -63,7 +59,12 @@ export default function RecipeCard({ recipe }) {
           </div>
           <div className={style.clockDesc}>Cooking time</div>
           <div className={style.ingr}>
-            <SVG id="#icon-ingredient" /> {recipe.ingredients.length}
+            <SVG id="#icon-ingredient" />{" "}
+            {recipe.ingredients_categories.reduce(
+              (previousValue, currentValue) =>
+                previousValue + currentValue.ingredients.length,
+              0
+            )}
           </div>
           <div className={style.ingrDesc}>Ingredients</div>
           <div className={style.serv}>
@@ -72,7 +73,7 @@ export default function RecipeCard({ recipe }) {
           <div className={style.servDesc}>Servings</div>
         </div>
         <div className={style.description}>{recipe.description}</div>
-        <Link href={`/recipes/${recipe.slug}`}>
+        <Link href={`/recipes/${recipe.id}`}>
           <a>
             <Button type="primary" className={style.button}>
               View recipe
