@@ -7,7 +7,16 @@ import {
   DiffOutlined,
   SendOutlined,
 } from "@ant-design/icons";
-import { Button, Input, InputNumber, Rate, Select } from "antd";
+import {
+  Button,
+  Form,
+  Input,
+  InputNumber,
+  message,
+  Rate,
+  Result,
+  Select,
+} from "antd";
 import Layout from "../../components/Layout/Layout";
 import Avatar from "antd/lib/avatar/avatar";
 import Link from "next/link";
@@ -21,11 +30,10 @@ import _ from "lodash";
 import DynamicSteps from "../../components/Recipe/Add/DynamicSteps";
 import { useMutation } from "@apollo/client";
 import { ADD_RECIPE } from "../../apollo/mutations";
-import slugify from "slugify";
-import makeid from "../../utility/makeId";
 import { useSelector } from "react-redux";
-import { getNickname } from "../../state/authSlice";
+import { getIsAuthorized, getNickname } from "../../state/authSlice";
 import { RECIPE_CATEGORIES } from "../../utility/recipeCategories";
+import { useRouter } from "next/router";
 
 function AddRecipe() {
   const [title, setTitle] = useState("Click here to change title");
@@ -58,10 +66,28 @@ function AddRecipe() {
   const [addRecipe, { data, error, loading }] = useMutation(ADD_RECIPE);
   const [categories, setCategories] = useState([]);
   const nicknameState = useSelector(getNickname);
+  const isAuthorized = useSelector(getIsAuthorized);
+  const router = useRouter();
 
   const { Option } = Select;
 
   const addRecipeHandler = () => {
+    if (categories.length < 1) {
+      message.warning("Categories cannot be empty!");
+      return;
+    }
+    if (imagesList.length < 1) {
+      message.warning("Please upload atleast one image!");
+      return;
+    }
+    if (!ingredients[0]?.ingredients[0]?.description) {
+      message.warning("Ingredients cannot be empty!");
+      return;
+    }
+    if (!steps[0]?.steps[0]?.description) {
+      message.warning("Steps cannot be empty!");
+      return;
+    }
     addRecipe({
       variables: {
         status: "Published",
@@ -140,147 +166,196 @@ function AddRecipe() {
     });
   };
 
+  if (!isAuthorized) {
+    return (
+      <Layout title="Log In" activeNav="home">
+        <div className={styles.container}>
+          <Result
+            style={{ width: "100%", alignSelf: "center" }}
+            status="error"
+            title="You need to be logged in to view this site"
+            extra={[
+              <Button
+                onClick={() => {
+                  router.push("/");
+                }}
+              >
+                Go home
+              </Button>,
+            ]}
+          ></Result>
+        </div>
+      </Layout>
+    );
+  }
+
   return (
     <Layout title="Add recipe" activeNav="recipes">
-      <div className={styles.header}>
-        <div>
-          <span className={styles.imagesTitle}>Images:</span>
-          <PicturesWall
-            fileList={imagesList}
-            setFileList={(files) => setImagesList(files)}
-          />
-        </div>
-        <div className={styles.details}>
-          <div className={styles.title}>
-            <EditableField
-              textClass={styles.title}
-              value={title}
-              changeHandler={setTitle}
-              minLength={5}
+      <Form>
+        <div className={styles.header}>
+          <div>
+            <span className={styles.imagesTitle}>Images:</span>
+            <PicturesWall
+              fileList={imagesList}
+              setFileList={(files) => setImagesList(files)}
             />
-            <div className={styles.categories}>
-              <Select
-                mode="multiple"
-                allowClear
-                placeholder="Please select categories"
-                style={{ width: "100%" }}
-                onChange={(event) => setCategories(event)}
-              >
-                {RECIPE_CATEGORIES.map((category, index) => (
-                  <Option key={index} value={index}>
-                    {category.title}
-                  </Option>
-                ))}
-              </Select>
-            </div>
           </div>
+          <div className={styles.details}>
+            <div className={styles.title}>
+              <EditableField
+                textClass={styles.title}
+                value={title}
+                changeHandler={setTitle}
+                minLength={5}
+              />
+              <div className={styles.categories}>
+                <Form.Item
+                  noStyle
+                  rules={{
+                    min: "1",
+                    type: "array",
+                  }}
+                >
+                  <Select
+                    mode="multiple"
+                    allowClear
+                    placeholder="Please select categories"
+                    style={{ width: "100%" }}
+                    onChange={(event) => setCategories(event)}
+                  >
+                    {RECIPE_CATEGORIES.map((category, index) => (
+                      <Option key={index} value={index}>
+                        {category.title}
+                      </Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+              </div>
+            </div>
 
-          <div className={styles.ratingAuthor}>
-            <div className={styles.rating}>
-              <Rate
-                disabled
-                defaultValue={5}
-                style={{ fontSize: "18px", paddingRight: "5px" }}
-              />
-              5 (100 votes)
+            <div className={styles.ratingAuthor}>
+              <div className={styles.rating}>
+                <Rate
+                  disabled
+                  defaultValue={5}
+                  style={{ fontSize: "18px", paddingRight: "5px" }}
+                />
+                5 (100 votes)
+              </div>
+              <div className={styles.author}>
+                <Avatar
+                  size={35}
+                  icon={<UserOutlined />}
+                  style={{
+                    marginRight: "1rem",
+                  }}
+                />
+                by <Link href="/">Martha</Link>
+              </div>
             </div>
-            <div className={styles.author}>
-              <Avatar
-                size={35}
-                icon={<UserOutlined />}
-                style={{
-                  marginRight: "1rem",
-                }}
-              />
-              by <Link href="/">Martha</Link>
+            <div className={styles.description}>
+              <Form.Item
+                noStyle
+                rules={[
+                  { required: true, message: "Please input your E-Mail!" },
+                  {
+                    type: "email",
+                    message: "The input is not valid E-mail!",
+                  },
+                ]}
+              >
+                <Input.TextArea
+                  value={description}
+                  onChange={(value) => setDescription(value.target.value)}
+                  style={{ minHeight: "20rem" }}
+                  placeholder="Your description here"
+                />
+              </Form.Item>
             </div>
-          </div>
-          <div className={styles.description}>
-            <Input.TextArea
-              value={description}
-              onChange={(value) => setDescription(value.target.value)}
-              style={{ minHeight: "20rem" }}
-              placeholder="Your description here"
-            />
-          </div>
-          <div className={styles.stats}>
-            <div className={styles.clock}>
-              <ClockCircleOutlined />
-              <InputNumber
-                min={1}
-                value={cookingTime}
-                onChange={(event) => setCookingTime(event)}
-              />
-              {/* {minutesToHours(recipe.cooking_time)} */}
+            <div className={styles.stats}>
+              <div className={styles.clock}>
+                <ClockCircleOutlined />
+                <InputNumber
+                  min={1}
+                  value={cookingTime}
+                  onChange={(event) => setCookingTime(event)}
+                />
+              </div>
+              <div className={styles.clockDesc}>Cooking time</div>
+              <div className={styles.ingr}>
+                <SVG id="#icon-ingredient" />{" "}
+                {ingredients.reduce(
+                  (previousValue, currentValue) =>
+                    previousValue + currentValue.ingredients.length,
+                  0
+                )}
+              </div>
+              <div className={styles.ingrDesc}>Ingredients</div>
+              <div className={styles.serv}>
+                <TeamOutlined />
+                <InputNumber
+                  min={1}
+                  value={servings}
+                  onChange={(event) => setServings(event)}
+                />
+              </div>
+              <div className={styles.servDesc}>Servings</div>
             </div>
-            <div className={styles.clockDesc}>Cooking time</div>
-            <div className={styles.ingr}>
-              <SVG id="#icon-ingredient" /> 0
-            </div>
-            <div className={styles.ingrDesc}>Ingredients</div>
-            <div className={styles.serv}>
-              <TeamOutlined />
-              <InputNumber
-                min={1}
-                value={servings}
-                onChange={(event) => setServings(event)}
-              />
-            </div>
-            <div className={styles.servDesc}>Servings</div>
           </div>
         </div>
-      </div>
-      <div className={styles.ingredientsContainer}>
-        <div className={styles.ingredientsTitle}>Ingredients:</div>
-        <div className={styles.ingredientsList}>
-          <DynamicTabs
-            ingredients={ingredients}
-            setIngredients={setIngredients}
+        <div className={styles.ingredientsContainer}>
+          <div className={styles.ingredientsTitle}>Ingredients:</div>
+          <div className={styles.ingredientsList}>
+            <DynamicTabs
+              ingredients={ingredients}
+              setIngredients={setIngredients}
+            >
+              {(categoryKey) => (
+                <DynamicList
+                  size="large"
+                  categoryKey={categoryKey}
+                  ingredients={ingredients}
+                  setIngredients={setIngredients}
+                />
+              )}
+            </DynamicTabs>
+          </div>
+          <Button
+            type="primary"
+            disabled
+            icon={<ShoppingCartOutlined />}
+            style={{
+              fontSize: "1.6rem",
+              width: "25rem",
+              alignSelf: "center",
+              marginBlock: "2rem",
+            }}
           >
-            {(categoryKey) => (
-              <DynamicList
-                size="large"
-                categoryKey={categoryKey}
-                ingredients={ingredients}
-                setIngredients={setIngredients}
-              />
-            )}
-          </DynamicTabs>
+            Add to cart
+          </Button>
         </div>
-        <Button
-          type="primary"
-          disabled
-          icon={<ShoppingCartOutlined />}
-          style={{
-            fontSize: "1.6rem",
-            width: "25rem",
-            alignSelf: "center",
-            marginBlock: "2rem",
-          }}
-        >
-          Add to cart
-        </Button>
-      </div>
-      <DynamicSteps steps={steps} setSteps={setSteps} />
-      <div className={styles.bottomNav}>
-        <Button
-          type="secondary"
-          size="large"
-          style={{ marginRight: "1rem" }}
-          icon={<DiffOutlined />}
-          onClick={() => console.log(steps)}
-        >
-          Save Draft
-        </Button>
-        <Button
-          type="primary"
-          size="large"
-          icon={<SendOutlined />}
-          onClick={() => addRecipeHandler()}
-        >
-          Send
-        </Button>
-      </div>
+        <DynamicSteps steps={steps} setSteps={setSteps} />
+        <div className={styles.bottomNav}>
+          <Button
+            type="secondary"
+            size="large"
+            style={{ marginRight: "1rem" }}
+            icon={<DiffOutlined />}
+            onClick={() => console.log(steps)}
+          >
+            Save Draft
+          </Button>
+          <Button
+            type="primary"
+            size="large"
+            icon={<SendOutlined />}
+            onClick={() => addRecipeHandler()}
+            htmlType="submit"
+          >
+            Send
+          </Button>
+        </div>
+      </Form>
     </Layout>
   );
 }

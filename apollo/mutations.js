@@ -1,13 +1,19 @@
 import gql from "graphql-tag";
 
 export const CREATE_ACCOUNT = gql`
-  mutation CreateAccoutn($password: String!, $email: String!, $nick: String) {
+  mutation CreateAccoutn(
+    $password: String!
+    $email: String!
+    $nickname: String
+  ) {
     create_users_item(
       data: {
-        role: { id: "8ba561b2-fdbd-468a-bdff-4a2e63f39080" }
+        role: "1c8cd8fb-eab9-432c-8edb-c44e8fc9ebe3"
         email: $email
         password: $password
-        nickname: $nick
+        username: $nick
+        provider: "default"
+        status: "active"
       }
     ) {
       id
@@ -17,7 +23,7 @@ export const CREATE_ACCOUNT = gql`
 
 export const LOGIN = gql`
   mutation AuthQuery($email: String!, $password: String!) {
-    auth_login(email: $email, password: $password, mode: cookie) {
+    auth_login(email: $email, password: $password) {
       access_token
       expires
       refresh_token
@@ -90,6 +96,44 @@ export const ADD_RECIPE = gql`
           description
         }
       }
+    }
+  }
+`;
+
+export const UPDATE_FAVOURITE_RECIPE = gql`
+  mutation UPDATE_FAVOURITE_RECIPE(
+    $recipes: [update_junction_directus_users_recipe_input]
+  ) {
+    update_users_me(data: { favourtie_recipes: $recipes }) {
+      id
+    }
+  }
+`;
+
+export const ADD_REVIEW = gql`
+  mutation CREATE_REVIEW(
+    $title: String
+    $description: String
+    $rating: Float
+    $recipe: create_recipe_input
+  ) {
+    create_reviews_item(
+      data: {
+        title: $title
+        description: $description
+        rating: $rating
+        recipe: $recipe
+      }
+    ) {
+      id
+    }
+  }
+`;
+
+export const DELETE_REVIEW = gql`
+  mutation DELETE_REVIEW($id: ID!) {
+    delete_reviews_item(id: $id) {
+      id
     }
   }
 `;

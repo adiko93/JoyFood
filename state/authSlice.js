@@ -37,8 +37,10 @@ export const authSlice = createSlice({
     expire: Cookie.get("expires") || null,
     remember: Cookie.get("remember") || null,
     loading: false,
+    favouriteRecipes: null,
     authorized: Cookie.get("refreshToken") ? true : false,
     nickname: null,
+    userID: null,
   },
   reducers: {
     setJWT: (state, action) => {
@@ -46,6 +48,12 @@ export const authSlice = createSlice({
     },
     setNickname: (state, action) => {
       state.nickname = action.payload;
+    },
+    setUserID: (state, action) => {
+      state.userID = action.payload;
+    },
+    setFavouriteRecipes: (state, action) => {
+      state.favouriteRecipes = action.payload;
     },
     refreshJWT: (state, action) => {
       (state.JWTToken = action.payload.access_token),
@@ -121,15 +129,24 @@ export const authSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { setJWT, setRemember, refreshJWT, logOut, setNickname } =
-  authSlice.actions;
+export const {
+  setJWT,
+  setRemember,
+  refreshJWT,
+  logOut,
+  setNickname,
+  setFavouriteRecipes,
+  setUserID,
+} = authSlice.actions;
 
 export const getAuthState = (state) => state.auth;
 export const isLoading = (state) => state.auth.loading;
 export const getRememberState = (state) => state.auth.remember;
-export const getJWTState = (state) => state.auth.JWTToken;
+export const getJWTState = (state) => state?.auth?.JWTToken;
 export const getExpireState = (state) => state.auth.expire;
 export const getIsAuthorized = (state) => state.auth.authorized;
 export const getNickname = (state) => state.auth.nickname;
+export const getUserID = (state) => state.auth.userID;
+export const getFavouriteRecipes = (state) => state.auth.favouriteRecipes;
 
 export default authSlice.reducer;

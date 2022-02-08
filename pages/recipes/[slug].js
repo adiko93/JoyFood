@@ -1,4 +1,4 @@
-import { useQuery } from "@apollo/client";
+import { useLazyQuery, useQuery } from "@apollo/client";
 import _ from "lodash";
 import { RECIPE } from "../../apollo/queries";
 import { Spin } from "antd";
@@ -6,13 +6,19 @@ import Header from "../../components/Recipe/Single/Header";
 import Ingredients from "../../components/Recipe/Single/Ingredients";
 import Steps from "../../components/Recipe/Single/Steps";
 import Layout from "../../components/Layout/Layout";
+import Reviews from "../../components/Recipe/Single/Reviews";
+import { useEffect, useState } from "react";
 
 export default function Recipe({ slug }) {
-  const { data, error, loading } = useQuery(RECIPE, {
+  const [fetchRecipes, { data, error, loading }] = useLazyQuery(RECIPE, {
     variables: {
       slugString: slug,
     },
   });
+
+  useEffect(() => {
+    fetchRecipes();
+  }, []);
   if (loading)
     return (
       <Spin
@@ -26,7 +32,7 @@ export default function Recipe({ slug }) {
         }}
       />
     );
-  if (data.recipe.length === 0 || error) {
+  if (data?.recipe.length === 0 || error || !data?.recipe) {
     return <>No recipes found</>;
   }
   const recipe = data.recipe[0];
@@ -36,6 +42,7 @@ export default function Recipe({ slug }) {
       <Header recipe={recipe} />
       <Ingredients recipe={recipe} />
       <Steps recipe={recipe} />
+      <Reviews recipe={recipe} forceRefresh={fetchRecipes} />
     </Layout>
   );
 }

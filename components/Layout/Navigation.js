@@ -5,10 +5,15 @@ import { useRouter } from "next/router";
 import { useDispatch, useSelector } from "react-redux";
 import { rerenderFilters, rerenderFiltersFalse } from "../../state/listSlice";
 import {
+  getFavouriteRecipes,
   getIsAuthorized,
+  getNickname,
+  getUserID,
   isLoading,
   logOut,
+  setFavouriteRecipes,
   setNickname,
+  setUserID,
 } from "../../state/authSlice";
 import { useEffect } from "react";
 import { useLazyQuery } from "@apollo/client";
@@ -28,7 +33,10 @@ export default function Navigation({ active }) {
   const router = useRouter();
   const dispatch = useDispatch();
   const loginLoading = useSelector(isLoading);
+  const favouriteRecipes = useSelector(getFavouriteRecipes);
   const isAuthorized = useSelector(getIsAuthorized);
+  const nickname = useSelector(getNickname);
+  const userID = useSelector(getUserID);
   const [fetchUserDetails, { data, error, loading }] = useLazyQuery(
     USER_DETAILS,
     {
@@ -45,7 +53,17 @@ export default function Navigation({ active }) {
   }, [isAuthorized]);
 
   useEffect(() => {
-    dispatch(setNickname(data?.users_me?.username));
+    if (!nickname && isAuthorized)
+      dispatch(setNickname(data?.users_me?.username));
+    if (!userID && isAuthorized) dispatch(setUserID(data?.users_me?.id));
+    if (!favouriteRecipes && isAuthorized)
+      dispatch(
+        setFavouriteRecipes(
+          data?.users_me?.favourtie_recipes.map((recipe) => {
+            return recipe.recipe_id.id;
+          })
+        )
+      );
   }, [data]);
 
   const avatarProps = data?.users_me?.avatar?.id
@@ -63,13 +81,7 @@ export default function Navigation({ active }) {
       </Menu.Item>
       <Menu.Divider />
       <Menu.Item icon={<UserOutlined />}>
-        <a
-          target="_blank"
-          rel="noopener noreferrer"
-          href="https://www.antgroup.com"
-        >
-          My Account
-        </a>
+        <Link href="/user/profile">My Account</Link>
       </Menu.Item>
       <Menu.Item icon={<BellOutlined />}>
         <a

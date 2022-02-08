@@ -2,7 +2,7 @@ import { Upload, Modal, message } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
-import { getJWTState } from "../../../state/authSlice";
+import { getIsAuthorized, getJWTState } from "../../../state/authSlice";
 import { SITE_BACKEND_URL } from "../../../utility/globals";
 import { useLazyQuery, useMutation } from "@apollo/client";
 import { USER_DETAILS } from "../../../apollo/queries";

@@ -1,5 +1,6 @@
+import { makeUniqueId } from "@apollo/client/utilities";
 import { Image } from "antd";
-import styles from "../../../styles/Recipe/Steps.module.css";
+import styles from "../../../styles/Recipe/Single/Steps.module.css";
 import { SITE_BACKEND_URL } from "../../../utility/globals";
 
 export default function Steps({ recipe }) {
@@ -7,11 +8,11 @@ export default function Steps({ recipe }) {
     <div className={styles.container}>
       {recipe.steps_categories.map((category, index) => {
         return (
-          <>
+          <div key={makeUniqueId()}>
             <div className={styles.categoryTitle}>{category.title}</div>
             {category.steps.map((step, index) => {
               return (
-                <div className={styles.step} key={index}>
+                <div className={styles.step} key={makeUniqueId()}>
                   <div className={styles.number}>{index + 1}</div>
                   <div className={styles.description}>{step.description}</div>
                   {step.image?.id ? (
@@ -26,7 +27,7 @@ export default function Steps({ recipe }) {
                 </div>
               );
             })}
-          </>
+          </div>
         );
       })}
     </div>

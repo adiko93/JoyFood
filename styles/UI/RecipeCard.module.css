@@ -10,6 +10,7 @@
   margin-right: 1rem;
   background-color: white;
   background-size: cover;
+  z-index: 1;
 }
 .image {
   object-fit: cover !important;
@@ -47,6 +48,31 @@
 }
 .container:hover .image {
   /* transform: scale(1.2); */
+}
+.favouriteContainer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  font-size: 3rem;
+  line-height: 1.5rem;
+  color: white;
+  margin: 0.4rem 0.4rem 0 0;
+  opacity: 0;
+  transition: all 0.3s linear;
+  z-index: 4;
+}
+.favouriteContainer::before {
+  content: "";
+  background: radial-gradient(#00000065 35%, #ffffff00 50%);
+  width: 18rem;
+  height: 18rem;
+  top: -10rem;
+  right: -10rem;
+  position: absolute;
+  border-radius: 50%;
+}
+.container:hover .favouriteContainer {
+  opacity: 100%;
 }
 .title {
   text-align: left;

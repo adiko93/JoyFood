@@ -1,6 +1,6 @@
 import { Rate, Avatar, Tag } from "antd";
 import RecipeCarousel from "../../UI/RecipeCarousel/RecipeCarousel";
-import styles from "../../../styles/Recipe/Header.module.css";
+import styles from "../../../styles/Recipe/Single/Header.module.css";
 import {
   UserOutlined,
   TeamOutlined,
@@ -20,7 +20,7 @@ export default function Header({ recipe }) {
       <RecipeCarousel slides={images} />
       <div className={styles.details}>
         <div className={styles.title}>
-          {recipe.title}{" "}
+          {recipe.title}
           <span className={styles.categories}>
             {recipe.categories.map((category, index) => {
               return (
@@ -36,10 +36,11 @@ export default function Header({ recipe }) {
           <div className={styles.rating}>
             <Rate
               disabled
-              defaultValue={2}
+              value={recipe.rating}
+              allowHalf
               style={{ fontSize: "18px", paddingRight: "5px" }}
-            />{" "}
-            3.5 (100 votes)
+            />
+            {`${recipe.rating} stars  (${recipe.reviews.length || 0} votes)`}
           </div>
           <div className={styles.author}>
             <Avatar
