@@ -1,0 +1,32 @@
+.section {
+  padding: 2rem 3rem;
+
+  &Title {
+    font-size: 4.5rem;
+    font-weight: 700;
+
+    &Color {
+      color: #fa9400;
+    }
+
+    svg {
+      height: 5.4rem;
+      margin-right: 1rem;
+    }
+  }
+}
+
+.container {
+  position: relative;
+  z-index: 4;
+  margin-inline: 2rem;
+
+  &Background {
+    width: 100%;
+    position: absolute;
+    bottom: 15%;
+    background-color: #fa960062;
+    height: 70%;
+    transform: skewX(-15deg);
+  }
+}

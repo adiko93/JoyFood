@@ -1,0 +1,49 @@
+.navbar {
+  position: fixed;
+  top: 0;
+  width: 100vw;
+  border-bottom: 1px solid rgb(236, 236, 236);
+  background-color: white;
+  z-index: 100;
+
+  &Container {
+    max-width: 128rem;
+    display: flex;
+    justify-content: space-between;
+    margin-inline: auto;
+    font-size: 2.3rem;
+  }
+}
+
+.logo {
+  font-weight: 700;
+  align-self: center;
+  margin-left: 2rem;
+  cursor: pointer;
+
+  &Orange {
+    color: #fa9400;
+  }
+}
+
+.search {
+  flex-grow: 1;
+  max-width: 40rem;
+  margin-inline: 3rem;
+  align-self: center;
+  transform: translateY(2px);
+}
+
+.navigation {
+  justify-self: flex-end;
+
+  &Menu {
+    &Auth {
+      font-weight: 600;
+
+      &Avatar {
+        margin-right: 1rem;
+      }
+    }
+  }
+}

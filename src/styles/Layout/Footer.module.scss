@@ -1,0 +1,12 @@
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 10rem;
+  background: linear-gradient(to bottom, #1a1a1a, #292929);
+
+  &Copyrights {
+    color: rgb(189, 189, 189);
+    font-size: 1.6rem;
+  }
+}

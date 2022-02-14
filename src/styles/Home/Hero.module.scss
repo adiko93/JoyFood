@@ -1,0 +1,43 @@
+.hero {
+  height: 53rem;
+  background-image: url("/images/hero.png");
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  justify-content: space-between;
+
+  &Text {
+    margin-left: 5rem;
+    align-self: center;
+    transform: translateY(-30%);
+
+    &::before {
+      content: "";
+      position: absolute;
+      width: 100%;
+      background-color: rgba(0, 0, 0, 0.301);
+      filter: blur(20px);
+      height: 100%;
+      z-index: -1;
+    }
+
+    &Title {
+      font-size: 5rem;
+      font-weight: 600;
+      color: #fa9400;
+
+      &SVG {
+        width: 4.9rem;
+        height: 4.9rem;
+      }
+    }
+
+    &Description {
+      font-size: 1.9rem;
+      line-height: 2.4rem;
+      font-weight: 400;
+      letter-spacing: 0.8px;
+      color: rgb(235, 235, 235);
+    }
+  }
+}

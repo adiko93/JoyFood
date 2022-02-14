@@ -2,5 +2,7 @@
   "emmet.includeLanguages": {
     "javascript": "javascriptreact"
   },
-  "editor.acceptSuggestionOnCommitCharacter": false
+  "editor.acceptSuggestionOnCommitCharacter": false,
+  "typescript.suggest.paths": false,
+  "javascript.suggest.paths": false
 }
