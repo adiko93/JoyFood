@@ -29,6 +29,7 @@ export class Recipe implements RecipeClass {
   stepsCategories?;
   images?;
   reviews?;
+  dateCreated?;
 
   constructor(recipeInput: RecipeQuery) {
     this.id = recipeInput?.id;
@@ -39,6 +40,7 @@ export class Recipe implements RecipeClass {
     this.status = recipeInput?.status;
     this.publisher = recipeInput?.publisher;
     this.rating = recipeInput?.rating;
+    this.dateCreated = recipeInput?.date_created;
     this.categories = recipeInput?.categories?.map(
       (category: RecipeCategoriesQuery): RecipeCategories => {
         return {

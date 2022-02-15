@@ -1,4 +1,4 @@
-export default function minutesToHours(minutes) {
+export default function minutesToHours(minutes: number) {
   const hours = Math.floor(minutes / 60);
   minutes = minutes % 60;
   const days = Math.floor(hours / 24);

@@ -6,7 +6,13 @@ import { Provider } from "react-redux";
 import { ApolloProvider } from "@apollo/client";
 import "../styles/variables.less";
 
-function MyApp({ Component, pageProps }) {
+function MyApp({
+  Component,
+  pageProps,
+}: {
+  Component: React.FC;
+  pageProps: any;
+}) {
   return (
     <Provider store={store}>
       <ApolloProvider client={client}>

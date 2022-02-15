@@ -10,17 +10,15 @@ import {
 import styles from "../../styles/UI/EditableField.module.css";
 
 interface EditableField {
-  type: "input" | "textarea" | "number";
   size: SizeType;
   textClass: string;
   value: string | number;
-  changeHandler: () => void;
+  changeHandler: (value: string) => void;
   maxLength: number;
   minLength: number;
 }
 
 const EditableField: React.FC<EditableField> = ({
-  type = "input",
   size = "normal" as SizeType,
   textClass,
   value,
@@ -30,7 +28,7 @@ const EditableField: React.FC<EditableField> = ({
 }) => {
   const [editing, setEditing] = useState(false);
   const [tooltipVisible, setTooltipVisible] = useState(false);
-  const inputRef = useRef();
+  const inputRef = useRef<Input>(null);
 
   const saveEdit: ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement> = (
     value
@@ -49,59 +47,6 @@ const EditableField: React.FC<EditableField> = ({
     }
   }, [editing]);
 
-  const inputModel = () => {
-    let output = null;
-    switch (type) {
-      case "textarea":
-        output = (
-          <Input.TextArea
-            type={type}
-            size={size}
-            value={value}
-            onPressEnter={(value) => saveEdit(value)}
-            onBlur={(value) => saveEdit(value)}
-            onChange={(value) => changeHandler(value.target.value)}
-            maxLength={maxLength}
-            minLength={minLength}
-            ref={inputRef}
-            style={{ height: "20rem" }}
-          />
-        );
-        break;
-      case "input":
-        output = (
-          <Input
-            type={type}
-            size={size}
-            value={value}
-            onPressEnter={(value) => saveEdit(value)}
-            onBlur={(value) => saveEdit(value)}
-            onChange={(value) => changeHandler(value.target.value)}
-            maxLength={maxLength}
-            minLength={minLength}
-            ref={inputRef}
-          />
-        );
-        break;
-      case "number":
-        output = (
-          <InputNumber
-            type={type}
-            size={size}
-            value={value}
-            onPressEnter={(value) => saveEdit(value)}
-            onBlur={(value) => saveEdit(value)}
-            onChange={(value) => changeHandler(value)}
-            maxLength={maxLength}
-            minLength={minLength}
-            ref={inputRef}
-          />
-        );
-        break;
-    }
-    return output;
-  };
-
   if (editing) {
     return (
       <Tooltip
@@ -109,13 +54,24 @@ const EditableField: React.FC<EditableField> = ({
         visible={tooltipVisible}
         title={`Minimum ${minLength} charachters required!`}
       >
-        {inputModel()}
+        <Input
+          size={size}
+          value={value}
+          onPressEnter={(value) =>
+            saveEdit(value as unknown as ChangeEvent<HTMLInputElement>)
+          }
+          onBlur={(value) => saveEdit(value)}
+          onChange={(value) => changeHandler(value.target.value)}
+          maxLength={maxLength}
+          minLength={minLength}
+          ref={inputRef}
+        />
       </Tooltip>
     );
   }
   return (
     <span
-      className={`${textClass} ${type !== "textarea" && styles.text}`}
+      className={`${textClass} ${styles.text}`}
       onClick={() => setEditing(true)}
     >
       {value}

@@ -46,6 +46,7 @@ export interface RecipeQuery {
   cooking_time: number;
   status: string;
   rating: number;
+  date_created: Date;
   description: string;
   reviews: RecipeReviewQuery[];
   categories: RecipeCategoriesQuery[];

@@ -1,13 +1,4 @@
-import {
-  CaseReducers,
-  createSlice,
-  CreateSliceOptions,
-  PayloadAction,
-  Slice,
-  SliceCaseReducers,
-} from "@reduxjs/toolkit";
-import { WritableDraft } from "immer/dist/internal";
-import { ReducerAction, ReducerState } from "react";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "./store";
 
 interface ListInitialState {

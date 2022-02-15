@@ -4,10 +4,12 @@ import client from "../apollo/client";
 import { LOGIN } from "../apollo/mutations";
 import Cookie from "js-cookie";
 import { USER_DETAILS } from "../apollo/queries";
+import { NotificationInstance } from "antd/lib/notification";
+import { RootState } from "./store";
 
 export const logIn = createAsyncThunk(
   "auth/logIn",
-  async ({ email, password }) => {
+  async ({ email, password }: { email: string; password: string }) => {
     const response = await client.mutate({
       mutation: LOGIN,
       context: {
@@ -37,19 +39,23 @@ export const fetchUserDetails = createAsyncThunk(
   }
 );
 
-const openNotification = (type, title, text) => {
+const openNotification = (
+  type: keyof NotificationInstance,
+  title: string,
+  text: string
+) => {
   notification[type]({
     message: title,
     description: text,
   });
 };
 
-const logOutHandler = (state, message = true) => {
+const logOutHandler: Function = (state: RootState["auth"], message = true) => {
   ["jwt", "refreshToken"].map((key) => Cookie.remove(key));
 
   state.JWTToken = null;
   state.refreshToken = null;
-  state.expire = null;
+  state.expire = 0;
   state.loading = false;
   state.authorized = false;
 
@@ -58,8 +64,12 @@ const logOutHandler = (state, message = true) => {
 };
 
 const logInHandler = (
-  state,
-  { refresh_token, expires, access_token },
+  state: RootState["auth"],
+  {
+    refresh_token,
+    expires,
+    access_token,
+  }: { refresh_token: string; expires: number; access_token: string },
   message = true
 ) => {
   state.JWTToken = access_token;
@@ -84,11 +94,16 @@ export const authSlice = createSlice({
   initialState: {
     JWTToken: Cookie.get("jwt") || null,
     refreshToken: Cookie.get("refreshToken") || null,
-    expire: null,
+    expire: 0,
     remember: null,
     authorized: Cookie.get("jwt") ? true : false,
     loading: false,
-    userDetails: null,
+    userDetails: {
+      id: null,
+      username: null,
+      avatar: null,
+      favouriteRecipes: null,
+    },
     userDetailsLoading: false,
   },
 
@@ -98,23 +113,25 @@ export const authSlice = createSlice({
       logInHandler(state, { refresh_token, expires, access_token }, false);
     },
     logOut: (state) => logOutHandler(state),
+    setFavouriteRecipes: (state, action) => {
+      if (state?.userDetails?.favouriteRecipes)
+        state.userDetails.favouriteRecipes = action.payload;
+    },
   },
 
-  extraReducers: {
-    [logIn.fulfilled]: (state, action) => {
-      const { access_token, refresh_token, expires } =
-        action.payload.auth_login;
+  extraReducers: (builder) => {
+    builder.addCase(logIn.fulfilled, (state, { payload }) => {
+      const { access_token, refresh_token, expires } = payload.auth_login;
       logInHandler(state, { refresh_token, expires, access_token });
-    },
-    [logIn.rejected]: (state, action) => {
+    });
+    builder.addCase(logIn.rejected, (state, action) => {
       logOutHandler(state, false);
-      openNotification("error", "Error", action?.error?.message);
-    },
-    [logIn.pending]: (state) => {
+      openNotification("error", "Error", action?.error?.message!);
+    });
+    builder.addCase(logIn.pending, (state, action) => {
       state.loading = true;
-    },
-
-    [fetchUserDetails.fulfilled]: (state, action) => {
+    });
+    builder.addCase(fetchUserDetails.fulfilled, (state, action) => {
       const data = action.payload.users_me;
 
       state.userDetails = {
@@ -122,30 +139,30 @@ export const authSlice = createSlice({
         username: data.username,
         avatar: data.avatar?.id,
         favouriteRecipes: data.favourtie_recipes.map(
-          (recipe) => recipe.recipe_id.id
+          (recipe: any) => recipe.recipe_id.id
         ),
       };
 
       state.userDetailsLoading = false;
-    },
-    [fetchUserDetails.rejected]: (state) => {
+    });
+    builder.addCase(fetchUserDetails.rejected, (state, action) => {
       logOutHandler(state, false);
-      openNotification("error", "Error", action?.error?.message);
+      openNotification("error", "Error", action?.error?.message!);
       state.userDetailsLoading = false;
-    },
-    [fetchUserDetails.pending]: (state) => {
+    });
+    builder.addCase(fetchUserDetails.pending, (state, action) => {
       state.userDetailsLoading = true;
-    },
+    });
   },
 });
 
-export const { refreshJWT, logOut } = authSlice.actions;
+export const { refreshJWT, logOut, setFavouriteRecipes } = authSlice.actions;
 
-export const isLoading = (state) => state.auth.loading;
-export const getRememberState = (state) => state.auth.remember;
-export const getJWTState = (state) => state.auth.JWTToken;
-export const getExpireState = (state) => state.auth.expire;
-export const getIsAuthorized = (state) => state.auth.authorized;
-export const getUserDetails = (state) => state.auth.userDetails;
+export const isLoading = (state: RootState) => state.auth.loading;
+export const getRememberState = (state: RootState) => state.auth.remember;
+export const getJWTState = (state: RootState) => state.auth.JWTToken;
+export const getExpireState = (state: RootState) => state.auth.expire;
+export const getIsAuthorized = (state: RootState) => state.auth.authorized;
+export const getUserDetails = (state: RootState) => state.auth.userDetails;
 
 export default authSlice.reducer;

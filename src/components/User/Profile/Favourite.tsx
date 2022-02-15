@@ -4,10 +4,12 @@ import { useDispatch } from "react-redux";
 import { UPDATE_FAVOURITE_RECIPE } from "../../../apollo/mutations";
 import { GET_USER_FAVOURITES } from "../../../apollo/queries";
 import { setFavouriteRecipes } from "../../../state/authSlice";
+import { RecipeClass, RecipeQuery } from "../../../types";
+import { Recipe } from "../../../utility/RecipeClass";
 import RecipeTable from "../../UI/RecipeTable";
 
-function Favourite() {
-  const [recipeData, setRecipeData] = useState();
+const Favourite: React.FC = () => {
+  const [recipeData, setRecipeData] = useState<RecipeClass[]>([]);
   const dispatch = useDispatch();
   const { loading, error, data } = useQuery(GET_USER_FAVOURITES, {
     context: {
@@ -16,8 +18,8 @@ function Favourite() {
     onCompleted: (data) => {
       setRecipeData(
         data?.users_me?.favourtie_recipes
-          .map((recipe) => {
-            return recipe.recipe_id;
+          .map((recipe: { recipe_id: RecipeQuery }) => {
+            return new Recipe(recipe.recipe_id);
           })
           .reverse()
       );
@@ -30,7 +32,7 @@ function Favourite() {
     },
   });
 
-  const deleteHandler = (id) => {
+  const deleteHandler = (id: string) => {
     const filteredRecipes = recipeData.filter((recipe) => recipe.id !== id);
     const filteredRecipesID = filteredRecipes.map((recipe) => recipe.id);
     updateFavouriteRecipes({
@@ -54,6 +56,6 @@ function Favourite() {
       />
     </div>
   );
-}
+};
 
 export default Favourite;

@@ -1,26 +1,27 @@
-import style from "../../styles/UI/OauthButton.module.css";
+import styles from "../../styles/UI/OauthButton.module.css";
 
-export default function OauthButton(props) {
-  let color = style.facebook;
+const OauthButton: React.FC<{ color: string; href: string; style: string }> = ({
+  color: colorProp,
+  href,
+  style,
+  children,
+}) => {
+  let color = styles.facebook;
 
-  switch (props.color) {
+  switch (colorProp) {
     case "google":
-      color = style.google;
+      color = styles.google;
   }
 
   return (
-    <a className={`${style.link} ${color} ${props.style}`} href={props.href}>
-      {props.children}
-      <span className={style.span1}></span>
-      <span className={style.span2}></span>
-      <span className={style.span3}></span>
-      <span className={style.span4}></span>
+    <a className={`${styles.link} ${color} ${style}`} href={href}>
+      {children}
+      <span className={styles.span1}></span>
+      <span className={styles.span2}></span>
+      <span className={styles.span3}></span>
+      <span className={styles.span4}></span>
     </a>
   );
-}
+};
 
-{
-  /* <div class={`${style.glass_btn} ${color} ${props.style}`}>
-     
-</div> */
-}
+export default OauthButton;

@@ -4,23 +4,27 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { SITE_BACKEND_URL } from "../../utility/globals";
 import styles from "../../styles/UI/RecipeTable.module.css";
+import { RecipeCategories, RecipeClass } from "../../types";
 
-function RecipeTable({ recipes, deleteHandler }) {
+const RecipeTable: React.FC<{
+  recipes: RecipeClass[];
+  deleteHandler: (id: string) => void;
+}> = ({ recipes, deleteHandler }) => {
   const columns = [
     {
       title: "Select",
       dataIndex: "select",
       key: "select",
-      render: (text) => <Checkbox />,
+      render: () => <Checkbox />,
     },
     {
       title: "Image",
       dataIndex: "image",
       key: "image",
-      render: (image) => {
+      render: (image: any) => {
         return (
           <div className={styles.imageContainer}>
-            <Image src={image} className={styles.image} />
+            <Image alt="" src={image} className={styles.image} />
           </div>
         );
       },
@@ -29,13 +33,15 @@ function RecipeTable({ recipes, deleteHandler }) {
       title: "Title",
       dataIndex: "title",
       key: "title",
-      render: ([text, id]) => <Link href={`/recipes/${id}`}>{text}</Link>,
+      render: ([text, id]: [string, string]) => (
+        <Link href={`/recipes/${id}`}>{text}</Link>
+      ),
     },
     {
       title: "Categories",
       dataIndex: "categories",
       key: "categories",
-      render: (categories) =>
+      render: (categories: string[]) =>
         categories?.map((category, index) => <Tag key={index}>{category}</Tag>),
     },
     {
@@ -71,7 +77,7 @@ function RecipeTable({ recipes, deleteHandler }) {
     {
       title: "Action",
       key: "action",
-      render: (text) => (
+      render: (text: any) => (
         <Popconfirm
           title="Are you sure you want to delete this?"
           onConfirm={() => deleteHandler(text.id)}
@@ -89,13 +95,13 @@ function RecipeTable({ recipes, deleteHandler }) {
   const data = recipes?.map((recipe) => {
     return {
       id: recipe.id,
-      image: `${SITE_BACKEND_URL}/assets/${recipe?.images[0]?.directus_files_id.id}`,
+      image: `${SITE_BACKEND_URL}/assets/${recipe?.images![0]}`,
       title: [recipe.title, recipe.id],
-      categories: recipe.categories.map(
-        (category) => category.category_id.title
+      categories: recipe.categories!.map(
+        (category: RecipeCategories) => category.title
       ),
       status: recipe.status,
-      date: new Date(recipe.date_created).toUTCString(),
+      date: new Date(recipe.dateCreated!).toUTCString(),
     };
   });
 
@@ -115,6 +121,6 @@ function RecipeTable({ recipes, deleteHandler }) {
       <Table {...tableProps}></Table>
     </div>
   );
-}
+};
 
 export default RecipeTable;

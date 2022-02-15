@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { RootState } from "./store";
 
 export const utilitySlice = createSlice({
   name: "utility",
@@ -12,9 +13,9 @@ export const utilitySlice = createSlice({
   },
 });
 
-// Action creators are generated for each case reducer function
 export const { updateMaxCookingTime } = utilitySlice.actions;
 
-export const getMaxCookingTime = (state) => state.utility.cookingTime;
+export const getMaxCookingTime = (state: RootState) =>
+  state.utility.cookingTime;
 
 export default utilitySlice.reducer;

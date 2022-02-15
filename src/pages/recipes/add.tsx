@@ -35,7 +35,7 @@ import { getIsAuthorized, getNickname } from "../../state/authSlice";
 import { RECIPE_CATEGORIES } from "../../utility/recipeCategories";
 import { useRouter } from "next/router";
 
-function AddRecipe() {
+const AddRecipe: React.FC = () => {
   const [title, setTitle] = useState("Click here to change title");
   const [description, setDescription] = useState();
   const [cookingTime, setCookingTime] = useState(60);
@@ -359,6 +359,6 @@ function AddRecipe() {
       </Form>
     </Layout>
   );
-}
+};
 
 export default AddRecipe;

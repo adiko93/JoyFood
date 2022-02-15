@@ -1,8 +1,8 @@
-function padTo2Digits(num) {
+function padTo2Digits(num: number) {
   return num.toString().padStart(2, "0");
 }
 
-export default function formatDate(date) {
+export default function formatDate(date: Date) {
   return `${padTo2Digits(date.getHours())}:${padTo2Digits(
     date.getMinutes()
   )} ${[

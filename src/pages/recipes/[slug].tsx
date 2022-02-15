@@ -41,17 +41,19 @@ const Recipe: React.FC<{ slug: string }> = ({ slug }) => {
 
   return (
     <Layout title={recipe.title} activeNav="recipes">
-      <Header recipe={recipe} />
-      <Ingredients recipe={recipe} />
-      <Steps recipe={recipe} />
-      <Reviews recipe={recipe} forceRefresh={fetchRecipes} />
+      <>
+        <Header recipe={recipe} />
+        <Ingredients recipe={recipe} />
+        <Steps recipe={recipe} />
+        <Reviews recipe={recipe} forceRefresh={fetchRecipes} />
+      </>
     </Layout>
   );
 };
 
 export default Recipe;
 
-export async function getServerSideProps(props) {
+export async function getServerSideProps(props: any) {
   return {
     props: {
       slug: _.get(props, "query.slug", null),

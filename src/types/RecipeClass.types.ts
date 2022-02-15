@@ -42,6 +42,7 @@ export interface RecipeClass {
   publisher?: string;
   status?: string;
   rating?: number;
+  dateCreated?: Date;
   categories?: RecipeCategories[];
   ingredientsCategories?: RecipeIngredientsCategories[];
   stepsCategories?: RecipeStepsCategories[];

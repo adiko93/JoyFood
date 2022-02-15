@@ -13,25 +13,27 @@ const Home: React.FC<{
 }> = ({ dinnerProps, breakfastProps, dessertProps }) => {
   return (
     <Layout title="Home page" activeNav="home">
-      <Hero />
-      <RecipesSection
-        recipes={createRecipesArray(dinnerProps)}
-        title="Dinner"
-        svg="#icon-dinner"
-        iconWidth="8rem"
-      />
-      <RecipesSection
-        recipes={createRecipesArray(breakfastProps)}
-        title="Breakfast"
-        svg="#icon-breakfast"
-        iconWidth="9.5rem"
-      />
-      <RecipesSection
-        recipes={createRecipesArray(dessertProps)}
-        title="Dessert"
-        svg="#icon-dessert"
-        iconWidth="4.5rem"
-      />
+      <>
+        <Hero />
+        <RecipesSection
+          recipes={createRecipesArray(dinnerProps)}
+          title="Dinner"
+          svg="#icon-dinner"
+          iconWidth="8rem"
+        />
+        <RecipesSection
+          recipes={createRecipesArray(breakfastProps)}
+          title="Breakfast"
+          svg="#icon-breakfast"
+          iconWidth="9.5rem"
+        />
+        <RecipesSection
+          recipes={createRecipesArray(dessertProps)}
+          title="Dessert"
+          svg="#icon-dessert"
+          iconWidth="4.5rem"
+        />
+      </>
     </Layout>
   );
 };
