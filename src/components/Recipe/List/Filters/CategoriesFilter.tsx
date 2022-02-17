@@ -20,6 +20,7 @@ const CategoriesFilter: React.FC<{ categories: RecipeCategories[] }> = ({
       );
     dispatch(updateFilters({ name: "categories", value: categoriesTemp }));
   };
+
   return (
     <>
       {categories.map((category) => {

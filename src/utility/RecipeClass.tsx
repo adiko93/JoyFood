@@ -72,7 +72,7 @@ export class Recipe implements RecipeClass {
         return {
           title: category.title,
           steps: category.steps.map((step: RecipeStepQuery): RecipeSteps => {
-            return { description: step.description, image: step.image };
+            return { description: step.description, image: step.image?.id };
           }),
         };
       }

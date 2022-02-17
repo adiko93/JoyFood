@@ -1,11 +1,10 @@
 import styles from "../../styles/UI/OauthButton.module.css";
 
-const OauthButton: React.FC<{ color: string; href: string; style: string }> = ({
-  color: colorProp,
-  href,
-  style,
-  children,
-}) => {
+const OauthButton: React.FC<{
+  color?: string;
+  href?: string;
+  style?: string;
+}> = ({ color: colorProp, href, style, children }) => {
   let color = styles.facebook;
 
   switch (colorProp) {

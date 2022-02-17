@@ -1,5 +1,5 @@
 import { Button, Checkbox, Divider } from "antd";
-import styles from "../../../styles/Recipe/Single/Ingredients.module.css";
+import styles from "../../../styles/Recipe/Single/Ingredients.module.scss";
 import { ShoppingCartOutlined } from "@ant-design/icons";
 import { makeUniqueId } from "@apollo/client/utilities";
 import { RecipeClass } from "../../../types";

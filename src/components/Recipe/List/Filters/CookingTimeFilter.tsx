@@ -21,7 +21,7 @@ const CookingTimeFilter: React.FC = () => {
         max={2000}
         defaultValue={cookingTimeState}
         value={cookingTimeState}
-        tipFormatter={(key) => minutesToHours(key)}
+        tipFormatter={(key) => minutesToHours(key!)}
         onChange={(key) =>
           dispatch(updateFilters({ name: "cookingTime", value: key }))
         }
@@ -69,4 +69,4 @@ const CookingTimeFilter: React.FC = () => {
   );
 };
 
-export default React.memo(CookingTimeFilter);
+export default CookingTimeFilter;

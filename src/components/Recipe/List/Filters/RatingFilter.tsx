@@ -5,6 +5,7 @@ import { getRating, updateFilters } from "../../../../state/listSlice";
 const RatingFilter: React.FC = () => {
   const dispatch = useDispatch();
   const ratingState = useSelector(getRating);
+
   return (
     <Slider
       range

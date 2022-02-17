@@ -5,8 +5,8 @@ const SVG = ({
   style,
   id,
 }: {
-  classes: string;
-  style: CSSProperties;
+  classes?: string;
+  style?: CSSProperties;
   id: string;
 }) => {
   return (

@@ -1,5 +1,5 @@
 import "../styles/normalize.css";
-import "../styles/globals.css";
+import "../styles/globals.scss";
 import { store } from "../state/store";
 import client from "../apollo/client";
 import { Provider } from "react-redux";

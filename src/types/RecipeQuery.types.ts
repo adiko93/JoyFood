@@ -6,7 +6,9 @@ export interface RecipeIngredientQuery {
 
 export interface RecipeStepQuery {
   description: string;
-  image: string | FormData;
+  image: {
+    id: string;
+  };
 }
 
 export interface RecipeStepsCategoriesQuery {

@@ -5,7 +5,7 @@ import RatingFilter from "./Filters/RatingFilter";
 import SearchFilter from "./Filters/SearchFilter";
 
 import { Collapse } from "antd";
-import styles from "../../../styles/Recipe/List.module.css";
+import styles from "../../../styles/Recipe/List.module.scss";
 import _ from "lodash";
 import { useRouter } from "next/router";
 import { useSelector } from "react-redux";
@@ -24,7 +24,7 @@ const Filters: React.FC<{ categories: RecipeCategories[] }> = ({
 
   state = (
     <div className={styles.filters}>
-      <div className={styles.filters_title}>Filters</div>
+      <div className={styles.filtersTitle}>Filters</div>
       <Collapse
         expandIconPosition="right"
         defaultActiveKey={[

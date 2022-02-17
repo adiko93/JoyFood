@@ -9,7 +9,15 @@ import { RootState } from "./store";
 
 export const logIn = createAsyncThunk(
   "auth/logIn",
-  async ({ email, password }: { email: string; password: string }) => {
+  async ({
+    email,
+    password,
+    remember,
+  }: {
+    email: string;
+    password: string;
+    remember: boolean;
+  }) => {
     const response = await client.mutate({
       mutation: LOGIN,
       context: {
@@ -21,6 +29,8 @@ export const logIn = createAsyncThunk(
       },
       fetchPolicy: "no-cache",
     });
+
+    response.data.auth_login.remember = remember;
     return response.data;
   }
 );
@@ -69,7 +79,13 @@ const logInHandler = (
     refresh_token,
     expires,
     access_token,
-  }: { refresh_token: string; expires: number; access_token: string },
+    remember,
+  }: {
+    refresh_token: string;
+    expires: number;
+    access_token: string;
+    remember?: boolean;
+  },
   message = true
 ) => {
   state.JWTToken = access_token;
@@ -78,9 +94,15 @@ const logInHandler = (
   state.authorized = true;
   state.loading = false;
 
+  if (remember || Cookie.get("remember") === "true") {
+    Cookie.set("remember", "true");
+    state.remember = true;
+  }
+
   Cookie.set("jwt", access_token, {
     expires: (1 / 24 / 60) * 15,
   });
+
   Cookie.set("refreshToken", refresh_token, {
     expires: state.remember ? 7 : expires / 100 / 60 / 60 / 24,
   });
@@ -95,7 +117,7 @@ export const authSlice = createSlice({
     JWTToken: Cookie.get("jwt") || null,
     refreshToken: Cookie.get("refreshToken") || null,
     expire: 0,
-    remember: null,
+    remember: false,
     authorized: Cookie.get("jwt") ? true : false,
     loading: false,
     userDetails: {
@@ -121,8 +143,9 @@ export const authSlice = createSlice({
 
   extraReducers: (builder) => {
     builder.addCase(logIn.fulfilled, (state, { payload }) => {
-      const { access_token, refresh_token, expires } = payload.auth_login;
-      logInHandler(state, { refresh_token, expires, access_token });
+      const { access_token, refresh_token, expires, remember } =
+        payload.auth_login;
+      logInHandler(state, { refresh_token, expires, access_token, remember });
     });
     builder.addCase(logIn.rejected, (state, action) => {
       logOutHandler(state, false);

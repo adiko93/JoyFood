@@ -47,6 +47,7 @@ const Reviews: React.FC<{ recipe: RecipeClass; forceRefresh: Function }> = ({
       return Promise.reject(error);
     }
   );
+
   const handleReviewSend = async ({
     title,
     description,

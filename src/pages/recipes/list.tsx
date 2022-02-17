@@ -1,10 +1,11 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import client from "../../apollo/client";
 import {
   CATEGORIES,
   FILTER_SEARCH,
   FILTER_SEARCH_COUNT,
 } from "../../apollo/queries";
-import styles from "../../styles/Recipe/List.module.css";
+import styles from "../../styles/Recipe/List.module.scss";
 import _ from "lodash";
 import Filters from "../../components/Recipe/List/Filters";
 import { ApolloError, useLazyQuery } from "@apollo/client";
@@ -22,11 +23,10 @@ import {
   updatePagination,
 } from "../../state/listSlice";
 import Layout from "../../components/Layout/Layout";
-import { type } from "os";
 import { RecipeCategories } from "../../types";
 import { Recipe } from "../../utility/RecipeClass";
 
-const FILTER_DEFAULTS: {
+interface FilterDefaults {
   search: string;
   categories: string[];
   cookingTime: number[];
@@ -35,7 +35,9 @@ const FILTER_DEFAULTS: {
   author: string;
   page: number;
   perPage: number;
-} = {
+}
+
+const FILTER_DEFAULTS: FilterDefaults = {
   search: "",
   categories: [],
   cookingTime: [1, 2000],
@@ -69,7 +71,7 @@ const List: React.FC<{
     { data: countData, error: countError, loading: countLoading },
   ] = useLazyQuery(FILTER_SEARCH_COUNT, {
     onCompleted: (data) => {
-      setItemsCount(data?.recipe.length || 0);
+      setItemsCount(data?.recipe?.length || 0);
     },
   });
 
@@ -137,7 +139,8 @@ const List: React.FC<{
       let notFirst = false;
 
       _.forEach(filters, (value, key) => {
-        if (_.isEqual(value, FILTER_DEFAULTS[key])) return;
+        if (_.isEqual(value, FILTER_DEFAULTS[key as keyof FilterDefaults]))
+          return;
         if (!notFirst) {
           queryParameters = queryParameters.concat(`?${key}=${value}`);
           notFirst = true;
@@ -147,7 +150,8 @@ const List: React.FC<{
       });
 
       _.forEach(paginationState, (value, key) => {
-        if (_.isEqual(value, FILTER_DEFAULTS[key])) return;
+        if (_.isEqual(value, FILTER_DEFAULTS[key as keyof FilterDefaults]))
+          return;
         if (resetPage && key === "page") {
           value = 1;
           dispatch(updatePagination({ name: "page", value: 1 }));
@@ -178,25 +182,17 @@ const List: React.FC<{
       debounce();
       return debounce.cancel;
     }
-  }, [debounce, loadingDefaults]);
+  }, [filters]);
 
   useEffect(() => {
     if (!loadingDefaults) {
       sendQuery(false, true);
     }
-  }, [loadingDefaults, paginationState, sendQuery]);
-
-  // Update URL with queries
+  }, [paginationState]);
 
   // Send query
   useEffect(() => {
     let filterQueries = [];
-    // if (query?.search)
-    //   query.search.split(" ").forEach((keyword) => {
-    //     filterQueries.push({
-    //       slug: { _contains: keyword.toLowerCase() },
-    //     });
-    //   });
 
     if (query?.categories)
       (query.categories as string).split(",").forEach((category) => {
@@ -208,6 +204,7 @@ const List: React.FC<{
           },
         });
       });
+
     if (query?.cookingTime) {
       const cookingTimeQuery = (query.cookingTime as string).split(",");
       filterQueries.push({
@@ -215,6 +212,15 @@ const List: React.FC<{
       });
       filterQueries.push({
         cooking_time: { _gte: parseFloat(cookingTimeQuery[0]) },
+      });
+    }
+    if (query?.rating) {
+      const ratingQuery = (query.rating as string).split(",");
+      filterQueries.push({
+        rating: { _lte: parseFloat(ratingQuery[1].replace(".", ",")) },
+      });
+      filterQueries.push({
+        rating: { _gte: parseFloat(ratingQuery[0].replace(".", ",")) },
       });
     }
     if (query?.ingredients)
@@ -249,7 +255,7 @@ const List: React.FC<{
         variables: {
           filters: filterQueries,
           page: parseInt((query?.page as string) || "1"),
-          perPage: parseInt(query?.perPage || perPageState),
+          perPage: parseInt((query?.perPage as string) || String(perPageState)),
           search: query?.search || null,
         },
       });
@@ -264,7 +270,7 @@ const List: React.FC<{
       <Layout title="Error" activeNav="home">
         <div className={styles.container}>
           <Result
-            style={{ width: "100%", gridColumn: "1/3", alignSelf: "center" }}
+            className={styles.error}
             status="error"
             title="Something went wrong"
             subTitle={`Please try to reload the page. Error message: ${
@@ -287,10 +293,7 @@ const List: React.FC<{
           tip="Loading..."
           spinning={loadingDefaults}
           size="large"
-          style={{
-            margin: "auto",
-            textAlign: "center",
-          }}
+          className={styles.spinner}
         >
           {loadingDefaults ? "" : <Filters categories={categories!} />}
         </Spin>
@@ -298,55 +301,43 @@ const List: React.FC<{
           tip="Loading..."
           spinning={loading || countLoading}
           size="large"
-          style={{
-            margin: "auto",
-            textAlign: "center",
-          }}
+          className={styles.spinner}
         >
           <div className={styles.recipes}>
-            <div className={styles.recipes_list_title}>
+            <div className={styles.recipesTitle}>
               {getListTitle} (<span>{itemsCount}</span> found)
             </div>
-            <div className={styles.recipes_list}>
-              {data?.recipe.length > 0 ? (
+            <div className={styles.recipesList}>
+              {data?.recipe.length === 0 && !loading && !countLoading ? (
+                <Result
+                  icon={<MehOutlined />}
+                  title="No recipes found!"
+                  subTitle="Try to change your filters"
+                  className={styles.recipesNotFound}
+                />
+              ) : (
                 data?.recipe.map((recipe: any) => {
                   return (
                     <RecipeCard recipe={new Recipe(recipe)} key={recipe.slug} />
                   );
                 })
-              ) : (
-                <Result
-                  icon={<MehOutlined />}
-                  title="No recipes found!"
-                  subTitle="Try to change your filters"
-                  style={{
-                    width: "100%",
-                    alignSelf: "center",
-                    gridColumn: "1/4",
-                  }}
-                />
               )}
             </div>
-            <div className={styles.bottom_pagination}>
-              <Pagination
-                style={{
-                  width: "auto",
-                  paddingTop: "1rem",
-                  paddingRight: "1rem",
-                }}
-                pageSize={perPageState}
-                total={itemsCount}
-                defaultPageSize={12}
-                pageSizeOptions={[12, 24, 36, 48]}
-                current={parseInt((query?.page as string) || "1")}
-                onChange={(page) => {
-                  dispatch(updatePagination({ name: "page", value: page }));
-                }}
-                onShowSizeChange={(current, size) => {
-                  dispatch(updatePagination({ name: "perPage", value: size }));
-                }}
-              ></Pagination>
-            </div>
+
+            <Pagination
+              className={styles.recipesPagination}
+              pageSize={perPageState}
+              total={itemsCount}
+              defaultPageSize={12}
+              pageSizeOptions={[12, 24, 36, 48]}
+              current={parseInt((query?.page as string) || "1")}
+              onChange={(page) => {
+                dispatch(updatePagination({ name: "page", value: page }));
+              }}
+              onShowSizeChange={(current, size) => {
+                dispatch(updatePagination({ name: "perPage", value: size }));
+              }}
+            ></Pagination>
           </div>
         </Spin>
       </div>

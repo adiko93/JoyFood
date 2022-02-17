@@ -1,6 +1,6 @@
 import { Rate, Avatar, Tag } from "antd";
 import RecipeCarousel from "../../UI/RecipeCarousel/RecipeCarousel";
-import styles from "../../../styles/Recipe/Single/Header.module.css";
+import styles from "../../../styles/Recipe/Single/Header.module.scss";
 import {
   UserOutlined,
   TeamOutlined,
@@ -20,9 +20,9 @@ const Header: React.FC<{ recipe: RecipeClass }> = ({ recipe }) => {
     <div className={styles.header}>
       <RecipeCarousel slides={images} />
       <div className={styles.details}>
-        <div className={styles.title}>
+        <div className={styles.detailsTitle}>
           {recipe.title}
-          <span className={styles.categories}>
+          <span className={styles.detailsCategories}>
             {recipe.categories!.map((category, index) => {
               return (
                 <Tag key={index} color="#FA9400">
@@ -33,17 +33,17 @@ const Header: React.FC<{ recipe: RecipeClass }> = ({ recipe }) => {
           </span>
         </div>
 
-        <div className={styles.ratingAuthor}>
-          <div className={styles.rating}>
+        <div className={styles.rating}>
+          <div className={styles.ratingStars}>
             <Rate
               disabled
               value={recipe.rating}
               allowHalf
-              style={{ fontSize: "18px", paddingRight: "5px" }}
+              style={{ fontSize: "2.2rem", paddingRight: "5px" }}
             />
             {`${recipe.rating} stars  (${recipe.reviews!.length || 0} votes)`}
           </div>
-          <div className={styles.author}>
+          <div className={styles.ratingAuthor}>
             <Avatar
               size={35}
               icon={<UserOutlined />}
@@ -56,12 +56,12 @@ const Header: React.FC<{ recipe: RecipeClass }> = ({ recipe }) => {
         </div>
         <div className={styles.description}>{recipe.description}</div>
         <div className={styles.stats}>
-          <div className={styles.clock}>
+          <div className={styles.statsClock}>
             <ClockCircleOutlined />
-            {minutesToHours(recipe.cookingTime)}
+            {minutesToHours(recipe.cookingTime!)}
           </div>
-          <div className={styles.clockDesc}>Cooking time</div>
-          <div className={styles.ingr}>
+          <div className={styles.statsClockDescription}>Cooking time</div>
+          <div className={styles.statsIngredients}>
             <SVG id="#icon-ingredient" />{" "}
             {recipe.ingredientsCategories!.reduce(
               (previousValue, currentValue) =>
@@ -69,12 +69,12 @@ const Header: React.FC<{ recipe: RecipeClass }> = ({ recipe }) => {
               0
             )}
           </div>
-          <div className={styles.ingrDesc}>Ingredients</div>
-          <div className={styles.serv}>
+          <div className={styles.statsIngredientsDescription}>Ingredients</div>
+          <div className={styles.statsServings}>
             <TeamOutlined />
             {recipe.servings}
           </div>
-          <div className={styles.servDesc}>Servings</div>
+          <div className={styles.statsServingsDescription}>Servings</div>
         </div>
       </div>
     </div>

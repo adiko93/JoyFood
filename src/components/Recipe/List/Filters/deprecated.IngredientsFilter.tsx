@@ -17,7 +17,7 @@ const IngredientsFilter: React.FC = () => {
     let filtersTemp: string[] | number[] = [...ingredientsState];
     if (event.target.name === "removeIngredient") {
       filtersTemp = filtersTemp.filter(
-        (value) => filtersTemp.indexOf(value) != event.target.value
+        (value: string) => filtersTemp.indexOf(value) != event.target.value
       );
     } else {
       filtersTemp[parseInt(event.target.slot)] = event.target.value;

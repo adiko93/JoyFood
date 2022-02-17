@@ -37,9 +37,9 @@ const Navigation: React.FC<{ active: string[] }> = ({ active }) => {
   }, [isAuthorized, dispatch]);
 
   // Check if user have avatar
-  const avatarProps = userDetails?.avatar?.id
+  const avatarProps = userDetails?.avatar
     ? {
-        src: `${SITE_BACKEND_URL}/assets/${userDetails.avatar.id}`,
+        src: `${SITE_BACKEND_URL}/assets/${userDetails.avatar}`,
       }
     : {
         icon: <UserOutlined />,
