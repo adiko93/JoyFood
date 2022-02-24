@@ -1,13 +1,19 @@
 import { Button, Input, InputNumber, Pagination } from "antd";
 import { Form } from "antd";
 import { PlusOutlined, MinusCircleOutlined } from "@ant-design/icons";
-import { useState } from "react";
+import { SetStateAction, useState } from "react";
 import style from "../../../styles/Recipe/Add/DynamicList.module.css";
 import _ from "lodash";
+import { RecipeIngredientsCategories } from "../../../types";
+import { Dispatch } from "redux";
 
 // TODO: REWORK SCSS + TSX
 
-const DynamicList = ({ categoryKey, ingredients, setIngredients }) => {
+const DynamicList: React.FC<{
+  categoryKey: number;
+  ingredients: RecipeIngredientsCategories;
+  setIngredients: Dispatch<SetStateAction<any>>;
+}> = ({ categoryKey, ingredients, setIngredients }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [lastKey, setLastKey] = useState(1);
 
@@ -25,7 +31,7 @@ const DynamicList = ({ categoryKey, ingredients, setIngredients }) => {
       key: lastKey++,
     });
 
-    setLastKey((prevState) => prevState++);
+    setLastKey((prevState) => prevState + 1);
     setIngredients(newIngredients);
     setCurrentPage(
       Math.floor((newIngredients[categoryIndex].ingredients.length - 1) / 10) +
@@ -38,7 +44,6 @@ const DynamicList = ({ categoryKey, ingredients, setIngredients }) => {
     newIngredients[categoryIndex].ingredients = newIngredients[
       categoryIndex
     ].ingredients.filter((ingredient) => ingredient.key !== key);
-
     ingredients[categoryIndex].ingredients.length ===
       (currentPage - 1) * 10 + 1 && setCurrentPage((page) => page--);
 

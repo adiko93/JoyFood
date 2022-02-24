@@ -9,7 +9,7 @@ import {
   Rate,
 } from "antd";
 import Avatar from "antd/lib/avatar/avatar";
-import styles from "../../../styles/Recipe/Single/Reviews.module.css";
+import styles from "../../../styles/Recipe/Single/Reviews.module.scss";
 import { UserOutlined } from "@ant-design/icons";
 import { useLazyQuery } from "@apollo/client";
 import { SITE_BACKEND_URL } from "../../../utility/globals";
@@ -38,6 +38,7 @@ const Reviews: React.FC<{ recipe: RecipeClass; forceRefresh: Function }> = ({
     },
   });
 
+  //Reftesh Token
   axios.interceptors.request.use(
     async function (config) {
       refreshToken();
@@ -98,7 +99,7 @@ const Reviews: React.FC<{ recipe: RecipeClass; forceRefresh: Function }> = ({
                 <div className={styles.reviewLeft}>
                   <Avatar
                     size="large"
-                    className={styles.reviewAvatar}
+                    className={styles.reviewLeftAvatar}
                     src={
                       review?.author?.avatar
                         ? `${SITE_BACKEND_URL}/assets/${review?.author?.avatar}`
@@ -106,10 +107,10 @@ const Reviews: React.FC<{ recipe: RecipeClass; forceRefresh: Function }> = ({
                     }
                     icon={!review?.author?.avatar ? <UserOutlined /> : null}
                   />{" "}
-                  <a className={styles.reviewNickname}>
+                  <a className={styles.reviewLeftNickname}>
                     {review?.author?.username}
                   </a>{" "}
-                  <span className={styles.reviewDate}>{`${formatDate(
+                  <span className={styles.reviewLeftDate}>{`${formatDate(
                     new Date(review.dateCreated)
                   )}`}</span>{" "}
                   {userDetails?.id === review.author.id ? (
@@ -120,14 +121,14 @@ const Reviews: React.FC<{ recipe: RecipeClass; forceRefresh: Function }> = ({
                       cancelText="No"
                       placement="topRight"
                     >
-                      <a className={styles.reviewDelete}>[ Delete ]</a>
+                      <a className={styles.reviewLeftDelete}>[ Delete ]</a>
                     </Popconfirm>
                   ) : null}
                 </div>
 
                 <div className={styles.reviewInfo}>
                   <Rate
-                    className={styles.reviewRate}
+                    className={styles.reviewInfoRate}
                     disabled
                     value={review.rating}
                   />
@@ -164,7 +165,7 @@ const Reviews: React.FC<{ recipe: RecipeClass; forceRefresh: Function }> = ({
             <Form.Item
               label="Title:"
               name="title"
-              className={styles.inputTitle}
+              className={styles.formInputTitle}
               rules={[{ required: true, message: "Please input title!" }]}
             >
               <Input />
@@ -180,7 +181,7 @@ const Reviews: React.FC<{ recipe: RecipeClass; forceRefresh: Function }> = ({
             <Form.Item
               label="Description:"
               name="description"
-              className={styles.inputDescription}
+              className={styles.formInputDescription}
               rules={[{ required: true, message: "Please input decsription!" }]}
             >
               <Input.TextArea style={{ minHeight: "20rem" }} />

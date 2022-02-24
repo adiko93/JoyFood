@@ -36,19 +36,19 @@ function DynamicSteps({ steps, setSteps }) {
   };
 
   const addStepHandler = (categoryIndex) => {
-    const tempStepKey = stepKey;
     let newSteps = _.cloneDeep(steps).map((category, index) => {
       if (index === categoryIndex)
         category.steps.push({
           description: "",
           image: [],
-          stepKey: tempStepKey,
+          stepKey: stepKey,
         });
       return category;
     });
-    setStepKey(tempStepKey + 1);
+    setStepKey((previousStepKey) => previousStepKey + 1);
     setSteps(newSteps);
   };
+
   const removeCategory = (categoryIndex) => {
     let newSteps = _.cloneDeep(steps).filter(
       (category, index) => index !== categoryIndex

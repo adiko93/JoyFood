@@ -1,4 +1,4 @@
-import styles from "../../styles/User/AuthLayout.module.css";
+import styles from "../../styles/User/AuthLayout.module.scss";
 
 const AuthLayout: React.FC = (props) => {
   return (

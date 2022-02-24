@@ -31,16 +31,16 @@ import DynamicSteps from "../../components/Recipe/Add/DynamicSteps";
 import { useMutation } from "@apollo/client";
 import { ADD_RECIPE } from "../../apollo/mutations";
 import { useSelector } from "react-redux";
-import { getIsAuthorized, getNickname } from "../../state/authSlice";
+import { getIsAuthorized, getUserDetails } from "../../state/authSlice";
 import { RECIPE_CATEGORIES } from "../../utility/recipeCategories";
 import { useRouter } from "next/router";
 
 const AddRecipe: React.FC = () => {
   const [title, setTitle] = useState("Click here to change title");
-  const [description, setDescription] = useState();
+  const [description, setDescription] = useState("");
   const [cookingTime, setCookingTime] = useState(60);
   const [servings, setServings] = useState(4);
-  const [imagesList, setImagesList] = useState([]);
+  const [imagesList, setImagesList] = useState<string[]>([]);
   const [steps, setSteps] = useState([
     {
       title: "Click here to change category title",
@@ -63,11 +63,13 @@ const AddRecipe: React.FC = () => {
       ],
     },
   ]);
-  const [addRecipe, { data, error, loading }] = useMutation(ADD_RECIPE);
   const [categories, setCategories] = useState([]);
-  const nicknameState = useSelector(getNickname);
+
+  const userDetails = useSelector(getUserDetails);
   const isAuthorized = useSelector(getIsAuthorized);
   const router = useRouter();
+
+  const [addRecipe, { data, error, loading }] = useMutation(ADD_RECIPE);
 
   const { Option } = Select;
 
@@ -76,14 +78,17 @@ const AddRecipe: React.FC = () => {
       message.warning("Categories cannot be empty!");
       return;
     }
+
     if (imagesList.length < 1) {
       message.warning("Please upload atleast one image!");
       return;
     }
+
     if (!ingredients[0]?.ingredients[0]?.description) {
       message.warning("Ingredients cannot be empty!");
       return;
     }
+
     if (!steps[0]?.steps[0]?.description) {
       message.warning("Steps cannot be empty!");
       return;
@@ -93,7 +98,7 @@ const AddRecipe: React.FC = () => {
         status: "Published",
         title: title,
         servings: servings,
-        publisher: nicknameState,
+        publisher: userDetails.username,
         cookingTime: cookingTime,
         description: description,
         categories: categories.map((category) => {
@@ -152,7 +157,6 @@ const AddRecipe: React.FC = () => {
               filename_download: img.filename_download,
               filesize: +img.filesize,
               height: img.height,
-              id: img.id,
               modified_on: img.modified_on,
               storage: img.storage,
               title: img.title,
@@ -198,7 +202,7 @@ const AddRecipe: React.FC = () => {
             <span className={styles.imagesTitle}>Images:</span>
             <PicturesWall
               fileList={imagesList}
-              setFileList={(files) => setImagesList(files)}
+              setFileList={(files: any) => setImagesList(files)}
             />
           </div>
           <div className={styles.details}>
@@ -210,13 +214,7 @@ const AddRecipe: React.FC = () => {
                 minLength={5}
               />
               <div className={styles.categories}>
-                <Form.Item
-                  noStyle
-                  rules={{
-                    min: "1",
-                    type: "array",
-                  }}
-                >
+                <Form.Item noStyle>
                   <Select
                     mode="multiple"
                     allowClear
@@ -251,7 +249,7 @@ const AddRecipe: React.FC = () => {
                     marginRight: "1rem",
                   }}
                 />
-                by <Link href="/">Martha</Link>
+                by <Link href="/">{userDetails.username}</Link>
               </div>
             </div>
             <div className={styles.description}>
@@ -338,7 +336,7 @@ const AddRecipe: React.FC = () => {
         <DynamicSteps steps={steps} setSteps={setSteps} />
         <div className={styles.bottomNav}>
           <Button
-            type="secondary"
+            type="dashed"
             size="large"
             style={{ marginRight: "1rem" }}
             icon={<DiffOutlined />}

@@ -1,10 +1,16 @@
-.carousel {
-  position: relative;
-  background-color: #f7f7f7;
-  padding: 20px;
-  max-width: 670px;
-  margin-inline: auto;
-  height: auto;
+.wraper {
+  height: 71rem;
+  overflow: hidden;
+  flex: 1 1 400px;
+
+  .carousel {
+    position: relative;
+    background-color: #f7f7f7;
+    padding: 20px;
+    max-width: 670px;
+    margin-inline: auto;
+    height: auto;
+  }
 }
 
 .viewport {
@@ -106,9 +112,4 @@
 
 .slide__thumb.is_selected .slide__thumbnail {
   opacity: 1;
-}
-.wraper {
-  height: 71rem;
-  overflow: hidden;
-  flex: 1 1 400px;
 }

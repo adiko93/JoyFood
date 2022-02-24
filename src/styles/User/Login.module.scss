@@ -1,0 +1,59 @@
+.login {
+  padding-inline: 4rem;
+  transform: translateY(-35px);
+
+  &Title {
+    font-size: 2.6rem;
+    font-weight: 700;
+  }
+
+  &Description {
+    font-size: 1.6rem;
+    font-weight: 400;
+  }
+
+  &Forgot {
+    float: right;
+  }
+
+  &Button {
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+
+  &Bottom {
+    text-align: center;
+  }
+
+  &Oauth {
+    display: flex;
+
+    &Facebook {
+      padding: 7px 5px;
+      font-size: 1.3rem;
+      display: flex;
+      align-items: center;
+
+      svg {
+        width: 30px;
+        height: 30px;
+        margin-right: 2px;
+      }
+    }
+
+    &Google {
+      padding: 7px 10px;
+      font-size: 1.3rem;
+      display: flex;
+      align-items: center;
+      margin-left: 4px;
+
+      svg {
+        width: 30px;
+        height: 30px;
+        margin-right: 4px;
+        fill: black;
+      }
+    }
+  }
+}

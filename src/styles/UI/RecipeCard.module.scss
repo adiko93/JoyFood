@@ -1,0 +1,195 @@
+.container {
+  min-width: 31.5rem;
+  position: relative;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  margin-right: 1rem;
+  background-color: white;
+  z-index: 1;
+  overflow: hidden;
+  transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+
+  &:hover {
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+    z-index: 22;
+
+    .favouriteContainer {
+      opacity: 100%;
+    }
+
+    .description {
+      transform: translateY(0);
+    }
+  }
+
+  .image {
+    object-fit: cover !important;
+    height: 100%;
+    width: 100%;
+    object-position: center;
+    transition: all 0.3s ease-out;
+  }
+
+  .favouriteContainer {
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-size: 3rem;
+    line-height: 1.5rem;
+    color: white;
+    margin: 0.4rem 0.4rem 0 0;
+    opacity: 0;
+    transition: all 0.3s linear;
+    z-index: 4;
+
+    &::before {
+      content: "";
+      background: radial-gradient(#00000065 35%, #ffffff00 50%);
+      width: 18rem;
+      height: 18rem;
+      top: -10rem;
+      right: -10rem;
+      position: absolute;
+      border-radius: 50%;
+    }
+  }
+
+  .description {
+    padding: 0.5rem 1.8rem 2rem 1.8rem;
+    z-index: 20;
+    position: absolute;
+    bottom: 0;
+    height: 29rem;
+    background: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0),
+      rgba(0, 0, 0, 0.219) 0%,
+      rgba(0, 0, 0, 0.712) 60%
+    );
+    transition: all 0.3s ease-out;
+    transform: translateY(18.8rem);
+    backdrop-filter: blur(4px);
+    width: 100%;
+
+    &Title {
+      text-align: center;
+      font-size: 2.2rem;
+      line-height: 3rem;
+      height: 6rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+    }
+
+    &Stats {
+      padding-block: 0.2rem 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      font-size: 1.4rem;
+      color: rgb(233, 233, 233);
+
+      &Author {
+        color: rgb(233, 233, 233);
+        font-size: 1.4rem;
+
+        &Color {
+          color: #f0bd00;
+          font-weight: 700;
+        }
+      }
+    }
+
+    &Text {
+      color: rgb(230, 230, 230);
+      padding-top: 0.6rem;
+      font-size: 1.4rem;
+      margin-bottom: 1rem;
+      height: 7rem;
+      text-align: left;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    &Details {
+      display: grid;
+      font-size: 1.4rem;
+      // background-color: rgba(255, 255, 255, 0.061);
+      color: rgb(211, 211, 211);
+      line-height: 1.9rem;
+      padding: 1rem;
+      // box-shadow: 0 0 1rem rgba(0, 0, 0, 0.39), 0 0 1rem rgba(0, 0, 0, 0.198);
+      justify-items: left;
+      align-items: center;
+      font-weight: 600;
+      position: relative;
+
+      &::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background-color: #f0bd00;
+        box-shadow: 0 0 1rem rgba(0, 0, 0, 0.39), 0 0 1rem rgba(0, 0, 0, 0.198);
+        transition: all 0.2s;
+      }
+
+      &::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        box-shadow: 0 0 1rem rgba(0, 0, 0, 0.39), 0 0 1rem rgba(0, 0, 0, 0.198);
+        background-color: #f0bd00;
+      }
+
+      svg {
+        width: 19px;
+        height: 19px;
+        fill: rgb(218, 218, 218);
+      }
+
+      &Clock {
+        font-size: 1.6rem;
+        color: #f0bd00;
+        font-weight: 600;
+
+        &Desc {
+          grid-row: 2/3;
+        }
+      }
+
+      &Ingr {
+        font-size: 1.6rem;
+        color: #f0bd00;
+        font-weight: 600;
+
+        &Desc {
+          grid-row: 2/3;
+        }
+      }
+
+      &Serv {
+        font-size: 1.6rem;
+        color: #f0bd00;
+        font-weight: 600;
+        grid-column: 3/4;
+
+        &Desc {
+          grid-row: 2/3;
+        }
+      }
+    }
+
+    &Button {
+      width: 100%;
+    }
+  }
+}

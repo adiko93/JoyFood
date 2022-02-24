@@ -1,77 +1,75 @@
 import { Button, Form, Input, notification } from "antd";
 import AuthLayout from "../../components/User/AuthLayout";
-import styles from "../../styles/User/Register.module.css";
+import styles from "../../styles/User/Register.module.scss";
 import Link from "next/link";
 import Layout from "../../components/Layout/Layout";
 import { useLazyQuery, useMutation } from "@apollo/client";
 import { CREATE_ACCOUNT } from "../../apollo/mutations";
 import _ from "lodash";
 import { useRouter } from "next/router";
+import { NotificationInstance } from "antd/lib/notification";
 
-export default function Register() {
-  const openNotification = (type, title, text) => {
+const Register = () => {
+  const router = useRouter();
+
+  const openNotification = (
+    type: keyof NotificationInstance,
+    title: string,
+    text: string
+  ) => {
     notification[type]({
       message: title,
       description: text,
     });
   };
-  const router = useRouter();
-  const [createAccountQuery, { data, error, loading }] = useMutation(
-    CREATE_ACCOUNT,
-    {
-      onCompleted: (data) => {
-        console.log(data);
-        if (data.create_users_item === null) {
-          openNotification(
-            "error",
-            "Username or e-mail already exists!",
-            "Please try to use diffrent username or e-mail address"
-          );
-        } else {
-          openNotification(
-            "success",
-            "Account created!",
-            "You've successfully createad an account. You can log in now."
-          );
-          _.delay(() => router.replace("/user/login"), 500);
-        }
-      },
-      onError: (error) => {
+
+  const [createAccountQuery, { loading }] = useMutation(CREATE_ACCOUNT, {
+    onCompleted: (data) => {
+      if (data.create_users_item === null) {
         openNotification(
           "error",
-          "Error",
-          `Something went wrong. Message: ${error?.message}`
+          "Username or e-mail already exists!",
+          "Please try to use diffrent username or e-mail address"
         );
-      },
-      context: {
-        clientName: "system",
-      },
-    }
-  );
+      } else {
+        openNotification(
+          "success",
+          "Account created!",
+          "You've successfully createad an account. You can log in now."
+        );
+        _.delay(() => router.replace("/user/login"), 500);
+      }
+    },
+    onError: (error) => {
+      openNotification(
+        "error",
+        "Error",
+        `Something went wrong. Message: ${error?.message}`
+      );
+    },
+    context: {
+      clientName: "system",
+    },
+  });
 
-  const eventHandler = (event) => {
-    try {
-      createAccountQuery({
-        variables: event,
-      });
-    } catch (err) {
-      console.log(err);
-    }
-  };
   return (
     <Layout title="Register" activeNav="login">
       <AuthLayout>
-        <div className={styles.container}>
-          <div className={styles.title}>Register</div>
-          <div className={styles.description}>
+        <div className={styles.register}>
+          <div className={styles.registerTitle}>Register</div>
+          <div className={styles.registerDescription}>
             Unlock all the features for free!
           </div>
           <Form
             name="normal_login"
-            className={styles.login_form}
+            className={styles.registerForm}
             initialValues={{ remember: true }}
             layout="vertical"
-            onFinish={eventHandler}
+            onFinish={(event) =>
+              createAccountQuery({
+                variables: event,
+              })
+            }
             style={{ marginTop: "1.5rem", marginBottom: ".1rem" }}
           >
             <Form.Item
@@ -144,12 +142,12 @@ export default function Register() {
               <Input.Password size="large" />
             </Form.Item>
 
-            <Form.Item className={styles.bottom}>
+            <Form.Item className={styles.registerBottom}>
               <Button
                 type="primary"
                 htmlType="submit"
                 loading={loading}
-                className={styles.button}
+                className={styles.registerBottomButton}
                 style={{ marginBottom: "1rem", marginTop: "1rem" }}
                 size="large"
               >
@@ -163,4 +161,6 @@ export default function Register() {
       </AuthLayout>
     </Layout>
   );
-}
+};
+
+export default Register;

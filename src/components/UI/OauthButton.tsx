@@ -1,4 +1,4 @@
-import styles from "../../styles/UI/OauthButton.module.css";
+import styles from "../../styles/UI/OauthButton.module.scss";
 
 const OauthButton: React.FC<{
   color?: string;

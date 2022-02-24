@@ -1,0 +1,16 @@
+.text {
+  padding: 6px 1px;
+  animation: 0.3s linear all;
+
+  transition: all 0.5s ease;
+  position: relative;
+
+  &:hover {
+    cursor: text;
+    padding: 5px 5px;
+    line-height: 1.8em;
+    border: 1px dashed #d9d9d9;
+    border-radius: 2px;
+    background: white;
+  }
+}

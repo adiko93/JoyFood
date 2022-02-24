@@ -1,5 +1,5 @@
 import { Button, Rate, Spin, Tooltip } from "antd";
-import style from "../../styles/UI/RecipeCard.module.css";
+import style from "../../styles/UI/RecipeCard.module.scss";
 import SVG from "../../utility/Svg";
 import Image from "next/image";
 import _ from "lodash";
@@ -31,7 +31,7 @@ const RecipeCard: React.FC<{ recipe: RecipeClass }> = ({ recipe }) => {
   });
 
   const favouirteHandler = async (number: number) => {
-    let newFavouriteRecipes = [...userDetails.favouriteRecipes];
+    let newFavouriteRecipes: string[] = [...userDetails.favouriteRecipes!];
     number
       ? newFavouriteRecipes.push(recipe.id)
       : (newFavouriteRecipes = newFavouriteRecipes.filter(
@@ -75,21 +75,27 @@ const RecipeCard: React.FC<{ recipe: RecipeClass }> = ({ recipe }) => {
           <div className={style.favouriteContainer}>
             <Rate
               count={1}
-              value={userDetails?.favouriteRecipes?.includes(recipe.id) ? 1 : 0}
+              value={
+                (userDetails?.favouriteRecipes! as string[])?.includes(
+                  recipe.id
+                )
+                  ? 1
+                  : 0
+              }
               tooltips={["Add to favourites"]}
               onChange={(number) => favouirteHandler(number)}
             />
           </div>
         ) : null}
 
-        <div className={style.descriptionBox}>
-          <div className={style.title}>
+        <div className={style.description}>
+          <div className={style.descriptionTitle}>
             <Clamp lines={2} withToggle={false}>
               {recipe.title}
             </Clamp>
           </div>
 
-          <div className={style.stats}>
+          <div className={style.descriptionStats}>
             <div>
               <Rate
                 disabled
@@ -97,21 +103,23 @@ const RecipeCard: React.FC<{ recipe: RecipeClass }> = ({ recipe }) => {
                 value={recipe.rating || 0}
                 style={{ fontSize: "14px", paddingRight: "5px" }}
               />
-              {recipe.rating || 0}
+              {`${recipe.rating || 0} stars`}
             </div>
-            <div className={style.author}>
+            <div className={style.descriptionStatsAuthor}>
               by{" "}
-              <span className={style.color}>
+              <span className={style.descriptionStatsAuthorColor}>
                 {_.get(recipe, "publisher", recipe.publisher)}
               </span>
             </div>
           </div>
-          <div className={style.details}>
-            <div className={style.clock}>
+          <div className={style.descriptionDetails}>
+            <div className={style.descriptionDetailsClock}>
               <SVG id="#icon-clock" /> {recipe.cookingTime} min
             </div>
-            <div className={style.clockDesc}>Cooking time</div>
-            <div className={style.ingr}>
+            <div className={style.descriptionDetailsClockDesc}>
+              Cooking time
+            </div>
+            <div className={style.descriptionDetailsIngr}>
               <SVG id="#icon-ingredient" />{" "}
               {recipe.ingredientsCategories!.reduce(
                 (previousValue, currentValue) =>
@@ -119,16 +127,16 @@ const RecipeCard: React.FC<{ recipe: RecipeClass }> = ({ recipe }) => {
                 0
               )}
             </div>
-            <div className={style.ingrDesc}>Ingredients</div>
-            <div className={style.serv}>
+            <div className={style.descriptionDetailsIngrDesc}>Ingredients</div>
+            <div className={style.descriptionDetailsServ}>
               <SVG id="#icon-servings" /> {recipe.servings}
             </div>
-            <div className={style.servDesc}>Servings</div>
+            <div className={style.descriptionDetailsServDesc}>Servings</div>
           </div>
-          <div className={style.description}>{recipe.description}</div>
+          <div className={style.descriptionText}>{recipe.description}</div>
           <Link href={`/recipes/${recipe.id}`}>
             <a>
-              <Button type="primary" className={style.button}>
+              <Button type="primary" className={style.descriptionButton}>
                 View recipe
               </Button>
             </a>

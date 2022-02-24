@@ -1,0 +1,44 @@
+.button {
+  cursor: pointer;
+  background-color: transparent;
+  touch-action: manipulation;
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 0;
+  width: 7rem;
+  height: 7rem;
+  fill: #ffffff;
+  padding: 0;
+
+  &:disabled {
+    cursor: default;
+    opacity: 0.3;
+  }
+
+  &Svg {
+    width: 50%;
+    height: 50%;
+  }
+
+  &Prev {
+    background: linear-gradient(to left, #f0bd00, #e57600);
+    border-radius: 50%;
+    left: 27px;
+
+    svg {
+      transform: translateX(-3px);
+    }
+  }
+
+  &Next {
+    background: linear-gradient(to right, #f0bd00, #e57600);
+    border-radius: 50%;
+    right: 27px;
+
+    svg {
+      transform: translateX(3px);
+    }
+  }
+}

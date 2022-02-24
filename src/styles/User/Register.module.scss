@@ -1,0 +1,20 @@
+.register {
+  padding-inline: 4rem;
+  width: 41rem;
+  &Title {
+    font-size: 2.6rem;
+    font-weight: 700;
+  }
+  &Description {
+    font-size: 1.6rem;
+    font-weight: 400;
+  }
+  &Bottom {
+    text-align: center;
+    font-size: 1.6rem;
+
+    &Button {
+      width: 100%;
+    }
+  }
+}

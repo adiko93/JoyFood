@@ -1,5 +1,5 @@
 import AuthLayout from "../../components/User/AuthLayout";
-import styles from "../../styles/User/Login.module.css";
+import styles from "../../styles/User/Login.module.scss";
 import { Form, Input, Button, Checkbox, Result } from "antd";
 import { MailOutlined, LockOutlined } from "@ant-design/icons";
 import OauthButton from "../../components/UI/OauthButton";
@@ -16,14 +16,14 @@ import {
 } from "../../state/authSlice";
 import { useRouter } from "next/router";
 
-export default function Login() {
+const Login: React.FC = () => {
   const dispatch = useDispatch();
   const rememberState = useSelector(getRememberState);
   const loadingState = useSelector(isLoading);
   const isAuthorized = useSelector(getIsAuthorized);
   const router = useRouter();
 
-  const eventHandler = async (event) => {
+  const eventHandler = async (event: any) => {
     await dispatch(
       logIn({
         email: event.email,
@@ -37,7 +37,7 @@ export default function Login() {
   if (isAuthorized) {
     return (
       <Layout title="Log In" activeNav="home">
-        <div className={styles.container}>
+        <div className={styles.login}>
           <Result
             style={{ width: "100%", alignSelf: "center" }}
             status="success"
@@ -48,6 +48,7 @@ export default function Login() {
                 onClick={() => {
                   router.push("/");
                 }}
+                key="Button"
               >
                 Go home
               </Button>,
@@ -61,7 +62,7 @@ export default function Login() {
   return (
     <Layout title="Log in" activeNav="login">
       <AuthLayout>
-        <div className={styles.container}>
+        <div className={styles.login}>
           <div className={styles.loginTitle}>Log In</div>
           <div className={styles.loginDescription}>
             Unlock all the features for free!
@@ -114,7 +115,7 @@ export default function Login() {
                 </Checkbox>
               </Form.Item>
 
-              <a className={styles.login_form_forgot} href="">
+              <a className={styles.loginForgot} href="">
                 Forgot password
               </a>
             </Form.Item>
@@ -124,24 +125,23 @@ export default function Login() {
                 type="primary"
                 htmlType="submit"
                 className={styles.loginButton}
-                style={{ marginBottom: "1rem" }}
                 loading={loadingState}
               >
                 Log in
               </Button>
               <br />
-              Don't have an account?{" "}
+              Don&apos;t have an account?{" "}
               <Link href="/user/register">Register now!</Link>
             </Form.Item>
           </Form>
-          <div className={styles.oauth}>
-            <OauthButton style={styles.facebook}>
+          <div className={styles.loginOauth}>
+            <OauthButton style={styles.loginOauthFacebook}>
               <SVG id="#icon-facebook" />
               Login with facebook
             </OauthButton>
             <OauthButton
               color="google"
-              style={styles.google}
+              style={styles.loginOauthGoogle}
               href="http://forkify.tk:1337/connect/google"
             >
               <SVG id="#icon-google" />
@@ -152,4 +152,6 @@ export default function Login() {
       </AuthLayout>
     </Layout>
   );
-}
+};
+
+export default Login;

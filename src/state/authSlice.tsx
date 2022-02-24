@@ -135,6 +135,9 @@ export const authSlice = createSlice({
       logInHandler(state, { refresh_token, expires, access_token }, false);
     },
     logOut: (state) => logOutHandler(state),
+    setRemember: (state, action) => {
+      state.remember = action.payload;
+    },
     setFavouriteRecipes: (state, action) => {
       if (state?.userDetails?.favouriteRecipes)
         state.userDetails.favouriteRecipes = action.payload;
@@ -179,7 +182,8 @@ export const authSlice = createSlice({
   },
 });
 
-export const { refreshJWT, logOut, setFavouriteRecipes } = authSlice.actions;
+export const { refreshJWT, logOut, setFavouriteRecipes, setRemember } =
+  authSlice.actions;
 
 export const isLoading = (state: RootState) => state.auth.loading;
 export const getRememberState = (state: RootState) => state.auth.remember;

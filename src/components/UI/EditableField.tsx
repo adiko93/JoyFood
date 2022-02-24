@@ -7,14 +7,14 @@ import {
   useRef,
   useState,
 } from "react";
-import styles from "../../styles/UI/EditableField.module.css";
+import styles from "../../styles/UI/EditableField.module.scss";
 
 interface EditableField {
-  size: SizeType;
+  size?: SizeType;
   textClass: string;
   value: string | number;
   changeHandler: (value: string) => void;
-  maxLength: number;
+  maxLength?: number;
   minLength: number;
 }
 

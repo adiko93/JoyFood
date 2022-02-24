@@ -1,6 +1,6 @@
 import { Input, Tabs } from "antd";
 import { useEffect, useRef, useState } from "react";
-import style from "../../../styles/Recipe/DynamicTabs.module.css";
+import style from "../../../styles/Recipe/Add/DynamicTabs.module.css";
 import { EditOutlined } from "@ant-design/icons";
 import _ from "lodash";
 

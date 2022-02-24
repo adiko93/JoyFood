@@ -14,16 +14,14 @@ const Ingredients: React.FC<{ recipe: RecipeClass }> = ({ recipe }) => {
             <div className={styles.list}>
               {category.ingredients.map((ingredient, index) => {
                 return (
-                  <Checkbox
-                    key={index}
-                    style={{ marginLeft: "0", fontSize: "1.6rem" }}
-                  >{`${ingredient.quantity ? `${ingredient.quantity} ` : ""}${
-                    ingredient.unit ? `${ingredient.unit} ` : ""
-                  }${ingredient.description}`}</Checkbox>
+                  <Checkbox key={index} className={styles.listIngredient}>{`${
+                    ingredient?.quantity || ""
+                  } ${ingredient?.unit || ""} ${
+                    ingredient?.description
+                  }`}</Checkbox>
                 );
               })}
             </div>
-            <Divider type="horizontal" />
           </div>
         );
       })}
@@ -31,12 +29,7 @@ const Ingredients: React.FC<{ recipe: RecipeClass }> = ({ recipe }) => {
       <Button
         type="primary"
         icon={<ShoppingCartOutlined />}
-        style={{
-          fontSize: "1.6rem",
-          width: "25rem",
-          alignSelf: "center",
-          marginBlock: "2rem",
-        }}
+        className={styles.button}
       >
         Add to cart
       </Button>

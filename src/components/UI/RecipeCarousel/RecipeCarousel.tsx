@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import useEmblaCarousel from "embla-carousel-react";
-import styles from "../../../styles/UI/RecipeCarousel/RecipeCarousel.module.css";
+import styles from "../../../styles/UI/RecipeCarousel/RecipeCarousel.module.scss";
+import { default as NextImage } from "next/image";
 import { Image } from "antd";
 
 const RecipeCarousel: React.FC<{ slides: string[] }> = ({ slides }) => {
