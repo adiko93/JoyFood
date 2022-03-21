@@ -1,6 +1,6 @@
 import SVG from "../../utility/Svg";
 
-export default function Spinner({ small }) {
+export default function Spinner({ small }: { small: boolean }) {
   const state = small ? (
     <div className="spinner_small">
       <SVG id="#icon-loader" />

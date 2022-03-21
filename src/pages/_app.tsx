@@ -1,10 +1,17 @@
 import "../styles/normalize.css";
 import "../styles/globals.scss";
 import { store } from "../state/store";
-import client from "../apollo/client";
 import { Provider } from "react-redux";
-import { ApolloProvider } from "@apollo/client";
 import "../styles/variables.less";
+import { QueryClient, QueryClientProvider } from "react-query";
+
+export const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 function MyApp({
   Component,
@@ -15,9 +22,9 @@ function MyApp({
 }) {
   return (
     <Provider store={store}>
-      <ApolloProvider client={client}>
+      <QueryClientProvider client={queryClient}>
         <Component {...pageProps} />
-      </ApolloProvider>
+      </QueryClientProvider>
     </Provider>
   );
 }

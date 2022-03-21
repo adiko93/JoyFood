@@ -4,11 +4,11 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { SITE_BACKEND_URL } from "../../utility/globals";
 import styles from "../../styles/UI/RecipeTable.module.css";
-import { RecipeCategories, RecipeClass } from "../../types";
+import { RecipeCategories, RecipeClassInterface } from "../../types";
 
 const RecipeTable: React.FC<{
-  recipes: RecipeClass[];
-  deleteHandler: (id: string) => void;
+  recipes: RecipeClassInterface[];
+  deleteHandler: (id: number) => void;
 }> = ({ recipes, deleteHandler }) => {
   const columns = [
     {
@@ -33,8 +33,8 @@ const RecipeTable: React.FC<{
       title: "Title",
       dataIndex: "title",
       key: "title",
-      render: ([text, id]: [string, string]) => (
-        <Link href={`/recipes/${id}`}>{text}</Link>
+      render: ([text, slug]: [string, string]) => (
+        <Link href={`/recipes/${slug}`}>{text}</Link>
       ),
     },
     {
@@ -54,26 +54,6 @@ const RecipeTable: React.FC<{
       dataIndex: "date",
       key: "date",
     },
-    // {
-    //   title: "Tags",
-    //   key: "tags",
-    //   dataIndex: "tags",
-    //   render: (tags) => (
-    //     <>
-    //       {tags.map((tag) => {
-    //         let color = tag.length > 5 ? "geekblue" : "green";
-    //         if (tag === "loser") {
-    //           color = "volcano";
-    //         }
-    //         return (
-    //           <Tag color={color} key={tag}>
-    //             {tag.toUpperCase()}
-    //           </Tag>
-    //         );
-    //       })}
-    //     </>
-    //   ),
-    // },
     {
       title: "Action",
       key: "action",
@@ -95,12 +75,12 @@ const RecipeTable: React.FC<{
   const data = recipes?.map((recipe) => {
     return {
       id: recipe.id,
-      image: `${SITE_BACKEND_URL}/assets/${recipe?.images![0]}`,
-      title: [recipe.title, recipe.id],
+      image: `${recipe?.images![0]}`,
+      title: [recipe.title, recipe.slug],
       categories: recipe.categories!.map(
         (category: RecipeCategories) => category.title
       ),
-      status: recipe.status,
+      status: recipe.publishedAt ? "published" : "draft",
       date: new Date(recipe.dateCreated!).toUTCString(),
     };
   });

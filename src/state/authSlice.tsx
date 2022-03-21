@@ -1,11 +1,9 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { notification } from "antd";
-import client from "../apollo/client";
-import { LOGIN } from "../apollo/mutations";
 import Cookie from "js-cookie";
-import { USER_DETAILS } from "../apollo/queries";
 import { NotificationInstance } from "antd/lib/notification";
 import { RootState } from "./store";
+import axiosStrapi from "../query/axiosInstance";
 
 export const logIn = createAsyncThunk(
   "auth/logIn",
@@ -18,19 +16,11 @@ export const logIn = createAsyncThunk(
     password: string;
     remember: boolean;
   }) => {
-    const response = await client.mutate({
-      mutation: LOGIN,
-      context: {
-        clientName: "system",
-      },
-      variables: {
-        email: email,
-        password: password,
-      },
-      fetchPolicy: "no-cache",
+    const response = await axiosStrapi.post("/auth/local", {
+      identifier: email,
+      password: password,
     });
-
-    response.data.auth_login.remember = remember;
+    response.data.remember = remember;
     return response.data;
   }
 );
@@ -38,13 +28,7 @@ export const logIn = createAsyncThunk(
 export const fetchUserDetails = createAsyncThunk(
   "auth/fetchUserDetails",
   async () => {
-    const response = await client.query({
-      query: USER_DETAILS,
-      context: {
-        clientName: "system",
-      },
-      fetchPolicy: "no-cache",
-    });
+    const response = await axiosStrapi.get("/users/me");
     return response.data;
   }
 );
@@ -61,14 +45,24 @@ const openNotification = (
 };
 
 const logOutHandler: Function = (state: RootState["auth"], message = true) => {
-  ["jwt", "refreshToken"].map((key) => Cookie.remove(key));
+  ["jwt", "remember"].map((key) => Cookie.remove(key));
 
   state.JWTToken = null;
-  state.refreshToken = null;
-  state.expire = 0;
   state.loading = false;
   state.authorized = false;
+  state.userDetails = {
+    id: null,
+    username: null,
+    avatar: null,
+    email: null,
+    favourite_recipes: null,
+  };
+  // axiosStrapi.interceptors.request.use(function (config: any) {
+  //   config.headers.Authorization = "sfasf";
 
+  //   return config;
+  // });
+  axiosStrapi.defaults.headers.common["Authorization"] = "";
   message &&
     openNotification("success", "Logged out", "You have been logged out");
 };
@@ -76,35 +70,26 @@ const logOutHandler: Function = (state: RootState["auth"], message = true) => {
 const logInHandler = (
   state: RootState["auth"],
   {
-    refresh_token,
-    expires,
-    access_token,
+    jwt,
     remember,
   }: {
-    refresh_token: string;
-    expires: number;
-    access_token: string;
+    jwt: string;
     remember?: boolean;
   },
   message = true
 ) => {
-  state.JWTToken = access_token;
-  state.refreshToken = refresh_token;
-  state.expire = new Date().getTime() + expires;
+  state.JWTToken = jwt;
   state.authorized = true;
   state.loading = false;
+  axiosStrapi.defaults.headers.common["Authorization"] = jwt;
 
   if (remember || Cookie.get("remember") === "true") {
     Cookie.set("remember", "true");
     state.remember = true;
   }
 
-  Cookie.set("jwt", access_token, {
-    expires: (1 / 24 / 60) * 15,
-  });
-
-  Cookie.set("refreshToken", refresh_token, {
-    expires: state.remember ? 7 : expires / 100 / 60 / 60 / 24,
+  Cookie.set("jwt", jwt, {
+    expires: remember ? 30 : 1,
   });
 
   message && openNotification("success", "Logged in", "Successfully logged in");
@@ -115,8 +100,6 @@ export const authSlice = createSlice({
 
   initialState: {
     JWTToken: Cookie.get("jwt") || null,
-    refreshToken: Cookie.get("refreshToken") || null,
-    expire: 0,
     remember: false,
     authorized: Cookie.get("jwt") ? true : false,
     loading: false,
@@ -124,31 +107,27 @@ export const authSlice = createSlice({
       id: null,
       username: null,
       avatar: null,
-      favouriteRecipes: null,
+      email: null,
+      favourite_recipes: null,
     },
     userDetailsLoading: false,
   },
 
   reducers: {
-    refreshJWT: (state, action) => {
-      const { refresh_token, expires, access_token } = action.payload;
-      logInHandler(state, { refresh_token, expires, access_token }, false);
-    },
     logOut: (state) => logOutHandler(state),
     setRemember: (state, action) => {
       state.remember = action.payload;
     },
     setFavouriteRecipes: (state, action) => {
-      if (state?.userDetails?.favouriteRecipes)
-        state.userDetails.favouriteRecipes = action.payload;
+      if (state?.userDetails?.favourite_recipes)
+        state.userDetails.favourite_recipes = action.payload;
     },
   },
 
   extraReducers: (builder) => {
     builder.addCase(logIn.fulfilled, (state, { payload }) => {
-      const { access_token, refresh_token, expires, remember } =
-        payload.auth_login;
-      logInHandler(state, { refresh_token, expires, access_token, remember });
+      const { jwt, remember } = payload;
+      logInHandler(state, { jwt, remember });
     });
     builder.addCase(logIn.rejected, (state, action) => {
       logOutHandler(state, false);
@@ -157,17 +136,8 @@ export const authSlice = createSlice({
     builder.addCase(logIn.pending, (state, action) => {
       state.loading = true;
     });
-    builder.addCase(fetchUserDetails.fulfilled, (state, action) => {
-      const data = action.payload.users_me;
-
-      state.userDetails = {
-        id: data.id,
-        username: data.username,
-        avatar: data.avatar?.id,
-        favouriteRecipes: data.favourtie_recipes.map(
-          (recipe: any) => recipe.recipe_id.id
-        ),
-      };
+    builder.addCase(fetchUserDetails.fulfilled, (state, { payload }) => {
+      state.userDetails = payload;
 
       state.userDetailsLoading = false;
     });
@@ -182,13 +152,11 @@ export const authSlice = createSlice({
   },
 });
 
-export const { refreshJWT, logOut, setFavouriteRecipes, setRemember } =
-  authSlice.actions;
+export const { logOut, setFavouriteRecipes, setRemember } = authSlice.actions;
 
 export const isLoading = (state: RootState) => state.auth.loading;
 export const getRememberState = (state: RootState) => state.auth.remember;
 export const getJWTState = (state: RootState) => state.auth.JWTToken;
-export const getExpireState = (state: RootState) => state.auth.expire;
 export const getIsAuthorized = (state: RootState) => state.auth.authorized;
 export const getUserDetails = (state: RootState) => state.auth.userDetails;
 

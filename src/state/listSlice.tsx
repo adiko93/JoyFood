@@ -80,7 +80,7 @@ export const {
 
 export const getFilters = (state: RootState) => state.list.filters;
 export const getSearch = (state: RootState) => state.list.filters.search;
-export const getCategories = (state: RootState) =>
+export const getCategoriesFilters = (state: RootState) =>
   state.list.filters.categories;
 export const getCookingTime = (state: RootState) =>
   state.list.filters.cookingTime;

@@ -1,5 +1,6 @@
 export interface RecipeCategories {
-  id: string;
+  id: number;
+  stringId: string;
   title: string;
 }
 
@@ -15,6 +16,7 @@ export interface RecipeIngredientsCategories {
 }
 
 export interface RecipeSteps {
+  sort: number;
   description: string;
   image: string | FormData;
 }
@@ -25,7 +27,7 @@ export interface RecipeStepsCategories {
 }
 
 export interface RecipeReviews {
-  id: string;
+  id: number;
   title: string;
   rating: number;
   description: string;
@@ -33,16 +35,19 @@ export interface RecipeReviews {
   dateCreated: Date;
 }
 
-export interface RecipeClass {
-  id: string;
+export interface RecipeClassInterface {
+  id: number;
   title?: string;
   description?: string;
   servings?: number;
   cookingTime?: number;
   publisher?: string;
+  publisherAvatar?: string;
   status?: string;
   rating?: number;
+  slug?: string;
   dateCreated?: Date;
+  publishedAt?: Date;
   categories?: RecipeCategories[];
   ingredientsCategories?: RecipeIngredientsCategories[];
   stepsCategories?: RecipeStepsCategories[];
@@ -51,7 +56,7 @@ export interface RecipeClass {
 }
 
 interface User {
-  id: string;
+  id: number;
   username: string;
   avatar: string;
 }

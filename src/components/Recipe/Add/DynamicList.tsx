@@ -11,8 +11,8 @@ import { Dispatch } from "redux";
 
 const DynamicList: React.FC<{
   categoryKey: number;
-  ingredients: RecipeIngredientsCategories;
-  setIngredients: Dispatch<SetStateAction<any>>;
+  ingredients: any;
+  setIngredients: Function;
 }> = ({ categoryKey, ingredients, setIngredients }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [lastKey, setLastKey] = useState(1);

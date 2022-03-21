@@ -12,15 +12,17 @@ const IngredientsFilter: React.FC = () => {
     target: {
       name: string;
       value: number;
+      slot: string;
     };
   }) => {
-    let filtersTemp: string[] | number[] = [...ingredientsState];
+    let filtersTemp: string[] = [...ingredientsState];
     if (event.target.name === "removeIngredient") {
       filtersTemp = filtersTemp.filter(
         (value: string) => filtersTemp.indexOf(value) != event.target.value
       );
     } else {
-      filtersTemp[parseInt(event.target.slot)] = event.target.value;
+      filtersTemp[parseInt(event.target.slot)] = event.target
+        .value as unknown as string;
     }
     dispatch(updateFilters({ name: "ingredients", value: filtersTemp }));
   };

@@ -2,9 +2,11 @@ import { Button, Checkbox, Divider } from "antd";
 import styles from "../../../styles/Recipe/Single/Ingredients.module.scss";
 import { ShoppingCartOutlined } from "@ant-design/icons";
 import { makeUniqueId } from "@apollo/client/utilities";
-import { RecipeClass } from "../../../types";
+import { RecipeClassInterface } from "../../../types";
 
-const Ingredients: React.FC<{ recipe: RecipeClass }> = ({ recipe }) => {
+const Ingredients: React.FC<{ recipe: RecipeClassInterface }> = ({
+  recipe,
+}) => {
   return (
     <div className={styles.container}>
       {recipe.ingredientsCategories!.map((category) => {

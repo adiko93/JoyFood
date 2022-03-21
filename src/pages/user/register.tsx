@@ -3,11 +3,11 @@ import AuthLayout from "../../components/User/AuthLayout";
 import styles from "../../styles/User/Register.module.scss";
 import Link from "next/link";
 import Layout from "../../components/Layout/Layout";
-import { useLazyQuery, useMutation } from "@apollo/client";
-import { CREATE_ACCOUNT } from "../../apollo/mutations";
 import _ from "lodash";
 import { useRouter } from "next/router";
 import { NotificationInstance } from "antd/lib/notification";
+import { useMutation } from "react-query";
+import axiosStrapi from "../../query/axiosInstance";
 
 const Register = () => {
   const router = useRouter();
@@ -23,34 +23,59 @@ const Register = () => {
     });
   };
 
-  const [createAccountQuery, { loading }] = useMutation(CREATE_ACCOUNT, {
-    onCompleted: (data) => {
-      if (data.create_users_item === null) {
-        openNotification(
-          "error",
-          "Username or e-mail already exists!",
-          "Please try to use diffrent username or e-mail address"
-        );
-      } else {
+  const registerMutation = useMutation(
+    async (variables: any) => {
+      return await axiosStrapi.post("/auth/local/register", variables);
+    },
+    {
+      onSuccess: () => {
         openNotification(
           "success",
           "Account created!",
           "You've successfully createad an account. You can log in now."
         );
-        _.delay(() => router.replace("/user/login"), 500);
-      }
-    },
-    onError: (error) => {
-      openNotification(
-        "error",
-        "Error",
-        `Something went wrong. Message: ${error?.message}`
-      );
-    },
-    context: {
-      clientName: "system",
-    },
-  });
+        setTimeout(() => {
+          router.push("/user/login");
+        }, 1000);
+      },
+      onError: (error: any) => {
+        openNotification(
+          "error",
+          "Error",
+          error.response.data.error.message || error?.message
+        );
+      },
+    }
+  );
+
+  // const [createAccountQuery, { loading }] = useMutation(CREATE_ACCOUNT, {
+  //   onCompleted: (data) => {
+  //     if (data.create_users_item === null) {
+  //       openNotification(
+  //         "error",
+  //         "Username or e-mail already exists!",
+  //         "Please try to use diffrent username or e-mail address"
+  //       );
+  //     } else {
+  //       openNotification(
+  //         "success",
+  //         "Account created!",
+  //         "You've successfully createad an account. You can log in now."
+  //       );
+  //       _.delay(() => router.replace("/user/login"), 500);
+  //     }
+  //   },
+  //   onError: (error) => {
+  //     openNotification(
+  //       "error",
+  //       "Error",
+  //       `Something went wrong. Message: ${error?.message}`
+  //     );
+  //   },
+  //   context: {
+  //     clientName: "system",
+  //   },
+  // });
 
   return (
     <Layout title="Register" activeNav="login">
@@ -66,14 +91,16 @@ const Register = () => {
             initialValues={{ remember: true }}
             layout="vertical"
             onFinish={(event) =>
-              createAccountQuery({
-                variables: event,
+              registerMutation.mutate({
+                username: event.username,
+                password: event.password,
+                email: event.email,
               })
             }
             style={{ marginTop: "1.5rem", marginBottom: ".1rem" }}
           >
             <Form.Item
-              name="nickname"
+              name="username"
               label="Username"
               tooltip="Will be also visible as author of your recipe"
               rules={[
@@ -146,7 +173,7 @@ const Register = () => {
               <Button
                 type="primary"
                 htmlType="submit"
-                loading={loading}
+                loading={registerMutation.isLoading}
                 className={styles.registerBottomButton}
                 style={{ marginBottom: "1rem", marginTop: "1rem" }}
                 size="large"

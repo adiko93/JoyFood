@@ -4,9 +4,10 @@ import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { getIsAuthorized, getJWTState } from "../../../state/authSlice";
 import { SITE_BACKEND_URL } from "../../../utility/globals";
-import { useLazyQuery, useMutation } from "@apollo/client";
 import { USER_DETAILS } from "../../../apollo/queries";
 import { DELETE_FILE } from "../../../apollo/mutations";
+import axiosStrapi from "../../../query/axiosInstance";
+import { useMutation } from "react-query";
 
 // TODO: REWORK SCSS + TSX
 
@@ -23,20 +24,19 @@ function PicturesWall({ maxImages = "10", fileList, setFileList }) {
   const [previewVisible, setPreviewVisible] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
   const [previewTitle, setPreviewTitle] = useState("");
-  const [fetchUserDetails, { data, error, loading }] = useLazyQuery(
-    USER_DETAILS,
-    {
-      fetchPolicy: "network-only",
-      context: {
-        clientName: "system",
-      },
-    }
-  );
-  const [deleteFileQuery, { error: errorDelete }] = useMutation(DELETE_FILE, {
-    context: {
-      clientName: "system",
-    },
+  const jwt = useSelector(getJWTState);
+
+  const uploadFile = useMutation(async (variables: any) => {
+    let formData = new FormData();
+    formData.append("files", variables.file);
+    return await axiosStrapi.post("/upload", formData);
   });
+
+  // const [deleteFileQuery, { error: errorDelete }] = useMutation(DELETE_FILE, {
+  //   context: {
+  //     clientName: "system",
+  //   },
+  // });
   const JWTToken = useSelector(getJWTState);
 
   const handleCancel = () => setPreviewVisible(false);
@@ -57,32 +57,23 @@ function PicturesWall({ maxImages = "10", fileList, setFileList }) {
     setFileList(fileList);
   };
 
-  const removeHandler = async (file) => {
-    await deleteFileQuery({
-      variables: {
-        id: file.response.data.id,
-      },
-    });
-    if (errorDelete) {
-      message.error(
-        "There was a problem connecting to the database, please relogin"
-      );
-      return false;
-    }
-    return true;
-  };
+  // const removeHandler = async (file) => {
+  //   await deleteFileQuery({
+  //     variables: {
+  //       id: file.response.data.id,
+  //     },
+  //   });
+  //   if (errorDelete) {
+  //     message.error(
+  //       "There was a problem connecting to the database, please relogin"
+  //     );
+  //     return false;
+  //   }
+  //   return true;
+  // };
 
   const uploadButton = (
-    <div
-      onClick={async () => {
-        //refresh token
-        await fetchUserDetails({
-          context: {
-            clientName: "system",
-          },
-        });
-      }}
-    >
+    <div>
       <PlusOutlined />
       <div style={{ marginTop: 8 }}>Upload</div>
     </div>
@@ -91,14 +82,29 @@ function PicturesWall({ maxImages = "10", fileList, setFileList }) {
     <>
       <Upload
         name="file"
-        action={`${SITE_BACKEND_URL}/files?access_token=${JWTToken}`}
+        // action={`${SITE_BACKEND_URL}/api/upload`}
+        action={async (file) => {
+          let formData = new FormData();
+          formData.append("files", file);
+          return await axiosStrapi.post("/upload", formData);
+        }}
         listType="picture-card"
         fileList={fileList}
         onPreview={handlePreview}
         onChange={handleChange}
-        onRemove={(file) => removeHandler(file)}
+        headers={{
+          Authorization: `Bearer ${jwt}`,
+        }}
+        // onRemove={(file) => removeHandler(file)}
         key="upload"
-        accept="image/png, image/gif, image/jpeg"
+        accept="image/*"
+        method="POST"
+        // customRequest={(props) => uploadFile.mutate(props)}
+        // data={(file) => {
+        //   let formData = new FormData();
+        //   formData.append("files", file);
+        //   return formData;
+        // }}
       >
         {fileList.length >= maxImages ? null : uploadButton}
       </Upload>

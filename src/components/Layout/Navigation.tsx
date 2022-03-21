@@ -7,6 +7,7 @@ import { rerenderFilters, rerenderFiltersFalse } from "../../state/listSlice";
 import {
   fetchUserDetails,
   getIsAuthorized,
+  getJWTState,
   getUserDetails,
   logOut,
 } from "../../state/authSlice";
@@ -20,26 +21,29 @@ import {
   PlusOutlined,
 } from "@ant-design/icons";
 import { SITE_BACKEND_URL } from "../../utility/globals";
+import axiosStrapi from "../../query/axiosInstance";
 
 const { Search } = Input;
 
 const Navigation: React.FC<{ active: string[] }> = ({ active }) => {
   const router = useRouter();
   const dispatch = useDispatch();
+  const jwt = useSelector(getJWTState);
 
   const isAuthorized = useSelector(getIsAuthorized);
   const userDetails = useSelector(getUserDetails);
 
   useEffect(() => {
     if (isAuthorized) {
+      axiosStrapi.defaults.headers.common["Authorization"] = `Bearer ${jwt}`;
       dispatch(fetchUserDetails());
     }
-  }, [isAuthorized, dispatch]);
+  }, [dispatch, isAuthorized, jwt]);
 
   // Check if user have avatar
   const avatarProps = userDetails?.avatar
     ? {
-        src: `${SITE_BACKEND_URL}/assets/${userDetails.avatar}`,
+        src: `${SITE_BACKEND_URL}${userDetails.avatar}`,
       }
     : {
         icon: <UserOutlined />,

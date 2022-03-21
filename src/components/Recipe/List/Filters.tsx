@@ -12,10 +12,9 @@ import { useSelector } from "react-redux";
 import { getFilters } from "../../../state/listSlice";
 import { ReactElement } from "react";
 import { RecipeCategories } from "../../../types";
+import IngredientsFilter from "./Filters/IngredientsFilter";
 
-const Filters: React.FC<{ categories: RecipeCategories[] }> = ({
-  categories,
-}) => {
+const Filters: React.FC = () => {
   let state: ReactElement;
   const router = useRouter();
   const filters = useSelector(getFilters);
@@ -40,7 +39,7 @@ const Filters: React.FC<{ categories: RecipeCategories[] }> = ({
           <SearchFilter />
         </Panel>
         <Panel header="Categories" key="categories">
-          <CategoriesFilter categories={categories} />
+          <CategoriesFilter />
         </Panel>
         <Panel header="Rating" key="rating">
           <RatingFilter />
@@ -48,10 +47,9 @@ const Filters: React.FC<{ categories: RecipeCategories[] }> = ({
         <Panel header="Cooking Time" key="cookingtime">
           <CookingTimeFilter />
         </Panel>
-        {/*TODO: Deep filtering on backend
         <Panel header="Ingredients" key="ingredients">
-          <IngredientsFilter defaultIngredients={filters.ingredients} />
-        </Panel> */}
+          <IngredientsFilter />
+        </Panel>
         <Panel header="Author" key="author">
           <AuthorFilter />
         </Panel>

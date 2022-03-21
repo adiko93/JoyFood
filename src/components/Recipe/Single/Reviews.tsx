@@ -20,32 +20,46 @@ import { useState } from "react";
 import axios from "axios";
 import { getJWTState } from "../../../state/authSlice";
 import { USER_DETAILS } from "../../../apollo/queries";
-import { RecipeClass } from "../../../types";
+import { RecipeClassInterface } from "../../../types";
+import { useMutation } from "react-query";
+import {
+  deleteReviewMutation,
+  sendReviewMutation,
+} from "../../../query/mutations";
+import { queryClient } from "../../../pages/_app";
 
-const Reviews: React.FC<{ recipe: RecipeClass; forceRefresh: Function }> = ({
-  recipe,
-  forceRefresh,
-}) => {
+const Reviews: React.FC<{ recipe: RecipeClassInterface }> = ({ recipe }) => {
   const [currentPage, setCurrentPage] = useState(1);
 
   const userDetails = useSelector(getUserDetails);
   const jwtToken = useSelector(getJWTState);
   const authenticated = useSelector(getIsAuthorized);
 
-  const [refreshToken] = useLazyQuery(USER_DETAILS, {
-    context: {
-      clientName: "system",
-    },
-  });
+  const sendReview = useMutation(
+    (variables: any) => sendReviewMutation(variables),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries("recipeSlug");
+        message.success("Review successfully added!");
+      },
+      onError: (error: any) => {
+        message.error(
+          `There was an error proccessing request. ${error.message}`
+        );
+      },
+    }
+  );
 
-  //Reftesh Token
-  axios.interceptors.request.use(
-    async function (config) {
-      refreshToken();
-      return config;
-    },
-    function (error) {
-      return Promise.reject(error);
+  const deleteReview = useMutation(
+    (variables: any) => deleteReviewMutation(variables),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries("recipeSlug");
+        message.success("Review successfully deleted!");
+      },
+      onError: (error) => {
+        message.error(`There was an error proccessing request. ${error}`);
+      },
     }
   );
 
@@ -58,41 +72,24 @@ const Reviews: React.FC<{ recipe: RecipeClass; forceRefresh: Function }> = ({
     description: string;
     rating: number;
   }) => {
-    try {
-      await axios({
-        method: "post",
-        headers: {
-          Authorization: `Bearer ${jwtToken}`,
-        },
-        url: `${SITE_BACKEND_URL}/rating/create?title=${title}&description=${description}&value=${rating}&recipe=${recipe.id}`,
-      });
-      forceRefresh();
-      message.success("Successfully added review!");
-    } catch (err) {
-      message.error(`There was an error proccessing request. ${err}`);
-    }
+    sendReview.mutate({
+      title,
+      description,
+      rating,
+      recipe: recipe.id,
+      author: userDetails.id,
+    });
   };
 
   const handleDeleteReview = async (id: string) => {
-    try {
-      await axios({
-        method: "post",
-        headers: {
-          Authorization: `Bearer ${jwtToken}`,
-        },
-        url: `${SITE_BACKEND_URL}/rating/delete?id=${id}&recipe=${recipe.id}`,
-      });
-      forceRefresh();
-    } catch (err) {
-      message.error(`There was an error proccessing request. ${err}`);
-    }
+    deleteReview.mutate(id);
   };
 
   return (
     <div className={styles.container}>
       <div className={styles.title}>Reviews:</div>
       {recipe?.reviews!.length > 0 ? (
-        recipe.reviews!.map((review, index) => {
+        recipe.reviews!.map((review: any, index: any) => {
           if ((currentPage - 1) * 5 <= index && index <= currentPage * 5 - 1)
             return (
               <div className={styles.review}>
@@ -102,7 +99,7 @@ const Reviews: React.FC<{ recipe: RecipeClass; forceRefresh: Function }> = ({
                     className={styles.reviewLeftAvatar}
                     src={
                       review?.author?.avatar
-                        ? `${SITE_BACKEND_URL}/assets/${review?.author?.avatar}`
+                        ? `${review?.author?.avatar}`
                         : null
                     }
                     icon={!review?.author?.avatar ? <UserOutlined /> : null}

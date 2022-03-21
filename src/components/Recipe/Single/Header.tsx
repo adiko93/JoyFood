@@ -9,21 +9,27 @@ import {
 import Link from "next/link";
 import SVG from "../../../utility/Svg";
 import minutesToHours from "../../../utility/minutesToHours";
-import { SITE_BACKEND_URL } from "../../../utility/globals";
-import { RecipeClass } from "../../../types";
+import { RecipeClassInterface } from "../../../types";
 
-const Header: React.FC<{ recipe: RecipeClass }> = ({ recipe }) => {
-  const images = recipe.images!.map((image) => {
-    return `${SITE_BACKEND_URL}/assets/${image}`;
-  });
+const Header: React.FC<{ recipe: RecipeClassInterface }> = ({ recipe }) => {
+  const images = recipe.images;
+
+  const avatarProps = recipe?.publisherAvatar
+    ? {
+        src: `${recipe.publisherAvatar}`,
+      }
+    : {
+        icon: <UserOutlined />,
+      };
+
   return (
     <div className={styles.header}>
-      <RecipeCarousel slides={images} />
+      <RecipeCarousel slides={images as string[]} />
       <div className={styles.details}>
         <div className={styles.detailsTitle}>
           {recipe.title}
           <span className={styles.detailsCategories}>
-            {recipe.categories!.map((category, index) => {
+            {recipe.categories!.map((category: any, index: any) => {
               return (
                 <Tag key={index} color="#FA9400">
                   {category.title}
@@ -46,12 +52,12 @@ const Header: React.FC<{ recipe: RecipeClass }> = ({ recipe }) => {
           <div className={styles.ratingAuthor}>
             <Avatar
               size={35}
-              icon={<UserOutlined />}
+              {...avatarProps}
               style={{
                 marginRight: "1rem",
               }}
             />
-            by <Link href="">Martha</Link>
+            by <Link href="">{recipe.publisher || "AllRecipes"}</Link>
           </div>
         </div>
         <div className={styles.description}>{recipe.description}</div>
@@ -64,7 +70,7 @@ const Header: React.FC<{ recipe: RecipeClass }> = ({ recipe }) => {
           <div className={styles.statsIngredients}>
             <SVG id="#icon-ingredient" />{" "}
             {recipe.ingredientsCategories!.reduce(
-              (previousValue, currentValue) =>
+              (previousValue: any, currentValue: any) =>
                 previousValue + currentValue.ingredients.length,
               0
             )}

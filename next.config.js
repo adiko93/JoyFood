@@ -11,6 +11,7 @@ module.exports = withLess({
       "joyfood.ga",
       "joyfood.ga:8055",
       "admin.joyfood.ga",
+      "storage.googleapis.com",
     ],
   },
 });

@@ -1,14 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import client from "../../apollo/client";
-import {
-  CATEGORIES,
-  FILTER_SEARCH,
-  FILTER_SEARCH_COUNT,
-} from "../../apollo/queries";
 import styles from "../../styles/Recipe/List.module.scss";
 import _ from "lodash";
 import Filters from "../../components/Recipe/List/Filters";
-import { ApolloError, useLazyQuery } from "@apollo/client";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/router";
 import RecipeCard from "../../components/UI/RecipeCard";
@@ -23,8 +16,14 @@ import {
   updatePagination,
 } from "../../state/listSlice";
 import Layout from "../../components/Layout/Layout";
-import { RecipeCategories } from "../../types";
-import { Recipe } from "../../utility/RecipeClass";
+import { StrapiRecipeFilters } from "../../types";
+import { useQuery } from "react-query";
+import {
+  fetchRecipesWithCount,
+  queryFilteredRecipes,
+} from "../../query/queries";
+import { queryClient } from "../_app";
+import { getCategories } from "../../state/utilitySlice";
 
 interface FilterDefaults {
   search: string;
@@ -48,32 +47,31 @@ const FILTER_DEFAULTS: FilterDefaults = {
   perPage: 12,
 };
 
-const List: React.FC<{
-  categories: RecipeCategories[];
-  errors: ApolloError;
-}> = ({ categories = null, errors = null }) => {
+const List: React.FC = () => {
   const [loadingDefaults, setLoadingDefaults] = useState(true);
-  const [isError, setIsError] = useState();
-  const [itemsCount, setItemsCount] = useState(0);
+  const [filters, setFilters] = useState<StrapiRecipeFilters>({});
 
   const router = useRouter();
   const dispatch = useDispatch();
-  const query = router.query;
+  const { query, isReady } = router;
 
   const perPageState = useSelector(getPerPage);
   const paginationState = useSelector(getPagination);
-  const filters = useSelector(getFilters);
+  const filtersState = useSelector(getFilters);
+  const categories: any = useSelector(getCategories);
 
-  const [queryFilteredRecipes, { data, error, loading }] =
-    useLazyQuery(FILTER_SEARCH);
-  const [
-    queryCount,
-    { data: countData, error: countError, loading: countLoading },
-  ] = useLazyQuery(FILTER_SEARCH_COUNT, {
-    onCompleted: (data) => {
-      setItemsCount(data?.recipe?.length || 0);
-    },
-  });
+  const { data, status, error, isError } = useQuery(
+    ["filteredRecipes", filters, paginationState],
+    async () => {
+      return await fetchRecipesWithCount(
+        queryFilteredRecipes(filters!, {
+          page: paginationState.page,
+          pageSize: paginationState.perPage,
+          withCount: true,
+        })
+      );
+    }
+  );
 
   // Title composer
   const getListTitle = useMemo(() => {
@@ -81,8 +79,10 @@ const List: React.FC<{
 
     if (query?.categories)
       (query.categories as string).split(",").forEach((category) => {
-        return categories?.forEach((match) => {
-          if (match.id === category) categoriesList.push(match.title);
+        return categories?.forEach((match: any) => {
+          if (Object.keys(match)[0] === category) {
+            categoriesList.push(match[category].title);
+          }
         });
       });
 
@@ -116,29 +116,29 @@ const List: React.FC<{
 
   // Update state with URL queries on load
   useEffect(() => {
-    async function funct() {
-      _.forEach(query, async (value, key) => {
+    if (loadingDefaults === true && isReady) {
+      // console.log(query);
+      _.forEach(query, (value, key) => {
         if (key === "page" || key === "perPage") {
-          await dispatch(
+          dispatch(
             updatePagination({ name: key, value: parseInt(value as string) })
           );
         } else {
-          await dispatch(
+          dispatch(
             updateFilters({ name: key, value: (value as string).split(",") })
           );
         }
       });
       setLoadingDefaults(false);
     }
-    funct();
-  }, []);
+  }, [query]);
 
   const sendQuery = useCallback(
     (resetPage, pagination) => {
       let queryParameters = "/recipes/list";
       let notFirst = false;
 
-      _.forEach(filters, (value, key) => {
+      _.forEach(filtersState, (value, key) => {
         if (_.isEqual(value, FILTER_DEFAULTS[key as keyof FilterDefaults]))
           return;
         if (!notFirst) {
@@ -169,7 +169,7 @@ const List: React.FC<{
       }
       router.replace(queryParameters, queryParameters, { scroll: pagination });
     },
-    [filters, paginationState]
+    [filtersState, paginationState]
   );
 
   // Debounce search query
@@ -182,7 +182,7 @@ const List: React.FC<{
       debounce();
       return debounce.cancel;
     }
-  }, [filters]);
+  }, [filtersState]);
 
   useEffect(() => {
     if (!loadingDefaults) {
@@ -192,80 +192,74 @@ const List: React.FC<{
 
   // Send query
   useEffect(() => {
-    let filterQueries = [];
+    let filterQueries: StrapiRecipeFilters = {
+      $and: [],
+    };
 
     if (query?.categories)
       (query.categories as string).split(",").forEach((category) => {
-        filterQueries.push({
+        filterQueries.$and?.push({
           categories: {
             category_id: {
-              id: { _contains: category },
+              $eq: category,
             },
           },
         });
       });
-
     if (query?.cookingTime) {
       const cookingTimeQuery = (query.cookingTime as string).split(",");
-      filterQueries.push({
-        cooking_time: { _lte: parseFloat(cookingTimeQuery[1]) },
+      filterQueries.$and?.push({
+        cooking_time: { $lte: parseFloat(cookingTimeQuery[1]) },
       });
-      filterQueries.push({
-        cooking_time: { _gte: parseFloat(cookingTimeQuery[0]) },
+      filterQueries.$and?.push({
+        cooking_time: { $gte: parseFloat(cookingTimeQuery[0]) },
       });
     }
     if (query?.rating) {
       const ratingQuery = (query.rating as string).split(",");
-      filterQueries.push({
-        rating: { _lte: parseFloat(ratingQuery[1].replace(".", ",")) },
+      filterQueries.$and?.push({
+        rating: { $lte: parseFloat(ratingQuery[1].replace(".", ",")) },
       });
-      filterQueries.push({
-        rating: { _gte: parseFloat(ratingQuery[0].replace(".", ",")) },
+      filterQueries.$and?.push({
+        rating: { $gte: parseFloat(ratingQuery[0].replace(".", ",")) },
       });
     }
+
     if (query?.ingredients)
       (query.ingredients as string).split(",").forEach((ingredient) => {
-        filterQueries.push({
+        filterQueries.$and?.push({
           ingredients_categories: {
             ingredients: {
-              description: { _contains: ingredient },
+              description: { $containsi: ingredient },
             },
           },
         });
       });
     if (query?.author)
-      filterQueries.push({
-        _or: [
-          {
-            user_created: {
-              username: { _contains: (query.author as string).toLowerCase() },
-            },
+      filterQueries.$and?.push({
+        author: {
+          username: {
+            $containsi: (query.author as string).toLowerCase(),
           },
-          { publisher: { _contains: query.author } },
-        ],
-      });
-    try {
-      queryCount({
-        variables: {
-          filters: filterQueries,
-          search: query?.search || null,
         },
       });
-      queryFilteredRecipes({
-        variables: {
-          filters: filterQueries,
-          page: parseInt((query?.page as string) || "1"),
-          perPage: parseInt((query?.perPage as string) || String(perPageState)),
-          search: query?.search || null,
-        },
+
+    if (query?.search) {
+      (query?.search as string).split(" ").forEach((word) => {
+        filterQueries.$and!.push({
+          title: {
+            $containsi: word,
+          },
+        });
       });
-    } catch (err: any) {
-      setIsError(err);
     }
+
+    setFilters(filterQueries);
+    queryClient.invalidateQueries("filteredRecipes");
   }, [query]);
 
   // Error handler
-  if (errors || error || countError)
+  if (isError)
     return (
       <Layout title="Error" activeNav="home">
         <div className={styles.container}>
@@ -273,9 +267,7 @@ const List: React.FC<{
             className={styles.error}
             status="error"
             title="Something went wrong"
-            subTitle={`Please try to reload the page. Error message: ${
-              errors?.message || error?.message || countError?.message
-            }`}
+            subTitle={`Please try to reload the page. Error message: ${error?.message}`}
             extra={[
               <Button key="reload" onClick={router.reload}>
                 Refresh
@@ -295,20 +287,21 @@ const List: React.FC<{
           size="large"
           className={styles.spinner}
         >
-          {loadingDefaults ? "" : <Filters categories={categories!} />}
+          {loadingDefaults ? "" : <Filters />}
         </Spin>
         <Spin
           tip="Loading..."
-          spinning={loading || countLoading}
+          spinning={status === "loading"}
           size="large"
           className={styles.spinner}
         >
           <div className={styles.recipes}>
             <div className={styles.recipesTitle}>
-              {getListTitle} (<span>{itemsCount}</span> found)
+              {getListTitle} (<span>{data?.pagination?.total}</span> found)
             </div>
             <div className={styles.recipesList}>
-              {data?.recipe.length === 0 && !loading && !countLoading ? (
+              {(data?.recipes?.length < 1 && status !== "loading") ||
+              isError ? (
                 <Result
                   icon={<MehOutlined />}
                   title="No recipes found!"
@@ -316,10 +309,8 @@ const List: React.FC<{
                   className={styles.recipesNotFound}
                 />
               ) : (
-                data?.recipe.map((recipe: any) => {
-                  return (
-                    <RecipeCard recipe={new Recipe(recipe)} key={recipe.slug} />
-                  );
+                data?.recipes?.map((recipe: any) => {
+                  return <RecipeCard recipe={recipe} key={recipe.slug} />;
                 })
               )}
             </div>
@@ -327,15 +318,17 @@ const List: React.FC<{
             <Pagination
               className={styles.recipesPagination}
               pageSize={perPageState}
-              total={itemsCount}
+              total={data?.pagination?.total}
               defaultPageSize={12}
               pageSizeOptions={[12, 24, 36, 48]}
               current={parseInt((query?.page as string) || "1")}
               onChange={(page) => {
                 dispatch(updatePagination({ name: "page", value: page }));
+                queryClient.invalidateQueries("filteredRecipes");
               }}
               onShowSizeChange={(current, size) => {
                 dispatch(updatePagination({ name: "perPage", value: size }));
+                queryClient.invalidateQueries("filteredRecipes");
               }}
             ></Pagination>
           </div>
@@ -344,27 +337,5 @@ const List: React.FC<{
     </Layout>
   );
 };
-
-export async function getServerSideProps() {
-  try {
-    const { data: categoriesResult, error: categoriesError } =
-      await client.query({ query: CATEGORIES });
-
-    return {
-      props: {
-        categories: categoriesResult.category,
-        errors: categoriesError || null,
-      },
-    };
-  } catch (err: any) {
-    return {
-      props: {
-        errors: {
-          message: err.message,
-        },
-      },
-    };
-  }
-}
 
 export default List;

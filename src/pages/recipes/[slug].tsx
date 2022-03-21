@@ -1,31 +1,25 @@
-import { useLazyQuery, useQuery } from "@apollo/client";
 import _ from "lodash";
-import { RECIPE } from "../../apollo/queries";
-import { Spin } from "antd";
+import { Button, Result, Spin } from "antd";
 import Header from "../../components/Recipe/Single/Header";
 import Ingredients from "../../components/Recipe/Single/Ingredients";
 import Steps from "../../components/Recipe/Single/Steps";
 import Layout from "../../components/Layout/Layout";
 import Reviews from "../../components/Recipe/Single/Reviews";
-import { useEffect, useState } from "react";
-import { Recipe as RecipeClass } from "../../utility/RecipeClass";
+import { useQuery } from "react-query";
+import { fetchRecipes, queryFullRecipe } from "../../query/queries";
+import { useRouter } from "next/router";
 
 const Recipe: React.FC<{ slug: string }> = ({ slug }) => {
-  const [fetchRecipes, { data, error, loading }] = useLazyQuery(RECIPE, {
-    variables: {
-      slugString: slug,
-    },
+  const { data, status } = useQuery("recipeSlug", async () => {
+    return await fetchRecipes(queryFullRecipe(slug));
   });
+  const router = useRouter();
 
-  useEffect(() => {
-    fetchRecipes();
-  }, [fetchRecipes]);
-
-  if (loading)
+  if (status === "loading")
     return (
       <Spin
         tip="Loading..."
-        spinning={loading}
+        spinning={status === "loading"}
         size="large"
         style={{
           margin: "auto",
@@ -34,18 +28,35 @@ const Recipe: React.FC<{ slug: string }> = ({ slug }) => {
         }}
       />
     );
-  if (data?.recipe.length === 0 || error || !data?.recipe) {
-    return <>No recipes found</>;
-  }
-  const recipe = new RecipeClass(data.recipe[0]);
 
+  if (data?.length < 1 || status === "error") {
+    return (
+      <Layout title="Error" activeNav="home">
+        <Result
+          style={{
+            width: "100%",
+            textAlign: "center",
+          }}
+          status="error"
+          title="Something went wrong"
+          subTitle={`Recipe not found :(`}
+          extra={[
+            <Button key="home" onClick={() => router.push("/")}>
+              Go to home page
+            </Button>,
+          ]}
+        ></Result>
+      </Layout>
+    );
+  }
+  console.log(data[0]);
   return (
-    <Layout title={recipe.title} activeNav="recipes">
+    <Layout title={data[0].title} activeNav="recipes">
       <>
-        <Header recipe={recipe} />
-        <Ingredients recipe={recipe} />
-        <Steps recipe={recipe} />
-        <Reviews recipe={recipe} forceRefresh={fetchRecipes} />
+        <Header recipe={data[0]} />
+        <Ingredients recipe={data[0]} />
+        <Steps recipe={data[0]} />
+        <Reviews recipe={data[0]} />
       </>
     </Layout>
   );

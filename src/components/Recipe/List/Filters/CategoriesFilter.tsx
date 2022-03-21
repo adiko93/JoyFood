@@ -2,17 +2,19 @@ import { Checkbox } from "antd";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
 import _ from "lodash";
 import { useDispatch, useSelector } from "react-redux";
-import { getCategories, updateFilters } from "../../../../state/listSlice";
-import { RecipeCategories } from "../../../../types";
+import {
+  getCategoriesFilters,
+  updateFilters,
+} from "../../../../state/listSlice";
+import { getCategories } from "../../../../state/utilitySlice";
 
-const CategoriesFilter: React.FC<{ categories: RecipeCategories[] }> = ({
-  categories,
-}) => {
+const CategoriesFilter: React.FC = () => {
   const dispatch = useDispatch();
-  const categoriesState = useSelector(getCategories);
+  const categoriesFliter = useSelector(getCategoriesFilters);
+  const categories: any = useSelector(getCategories);
 
   const eventHandler = (event: CheckboxChangeEvent) => {
-    let categoriesTemp = [...categoriesState];
+    let categoriesTemp = [...categoriesFliter];
     if (event.target.checked) categoriesTemp.push(event.target.value);
     if (!event.target.checked)
       categoriesTemp = categoriesTemp.filter(
@@ -20,20 +22,23 @@ const CategoriesFilter: React.FC<{ categories: RecipeCategories[] }> = ({
       );
     dispatch(updateFilters({ name: "categories", value: categoriesTemp }));
   };
-
+  if (categories.length === 0) {
+    return <div></div>;
+  }
   return (
     <>
-      {categories.map((category) => {
+      {categories.map((category: any, index: any) => {
+        const categoryId = Object.keys(category)[0];
         return (
-          <div key={category.id}>
+          <div key={categoryId}>
             <Checkbox
-              value={category.id}
+              value={categoryId}
               name="categories"
-              defaultChecked={categoriesState.includes(category.id)}
+              defaultChecked={categoriesFliter.includes(categoryId)}
               style={{ marginBottom: ".7rem" }}
               onChange={eventHandler}
             >
-              {category.title}
+              {categories[index][categoryId].title}
             </Checkbox>
           </div>
         );

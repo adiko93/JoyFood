@@ -1,11 +1,11 @@
 import styles from "../../styles/Home/RecipeSection.module.scss";
-import { RecipeClass } from "../../types";
+import { RecipeClassInterface } from "../../types";
 import SVG from "../../utility/Svg";
 import Carousel from "../UI/Carousel/Carousel";
 import RecipeCard from "../UI/RecipeCard";
 
 const RecipesSection: React.FC<{
-  recipes: RecipeClass[];
+  recipes: RecipeClassInterface[];
   title: string;
   svg: string;
   iconWidth: string;

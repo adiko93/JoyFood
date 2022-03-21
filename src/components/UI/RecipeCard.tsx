@@ -11,42 +11,47 @@ import {
   fetchUserDetails,
   getIsAuthorized,
   getUserDetails,
+  setFavouriteRecipes,
 } from "../../state/authSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { useMutation } from "@apollo/client";
-import { UPDATE_FAVOURITE_RECIPE } from "../../apollo/mutations";
-import { RecipeClass } from "../../types";
+import { RecipeClassInterface } from "../../types";
+import { useMutation } from "react-query";
+import axiosStrapi from "../../query/axiosInstance";
+import { updateFavouriteRecipesMutation } from "../../query/mutations";
 
-const RecipeCard: React.FC<{ recipe: RecipeClass }> = ({ recipe }) => {
+const RecipeCard: React.FC<{ recipe: RecipeClassInterface }> = ({ recipe }) => {
   const dispatch = useDispatch();
   const [imageLoading, setImageLoading] = useState(true);
 
   const isAuthorized = useSelector(getIsAuthorized);
   const userDetails = useSelector(getUserDetails);
 
-  const [updateFavouriteRecipes] = useMutation(UPDATE_FAVOURITE_RECIPE, {
-    context: {
-      clientName: "system",
-    },
-  });
-
-  const favouirteHandler = async (number: number) => {
-    let newFavouriteRecipes: string[] = [...userDetails.favouriteRecipes!];
-    number
+  const updateFavouriteRecipes: any = useMutation(
+    (recipesArray: number[]) =>
+      updateFavouriteRecipesMutation({
+        recipesArray,
+        userId: userDetails.id! as number,
+      }),
+    {
+      onError: () => {
+        dispatch(fetchUserDetails());
+      },
+    }
+  );
+  const favouirteHandler = async (current: number) => {
+    let newFavouriteRecipes: number[] = _.cloneDeep(
+      userDetails.favourite_recipes
+    )!;
+    current
       ? newFavouriteRecipes.push(recipe.id)
       : (newFavouriteRecipes = newFavouriteRecipes.filter(
           (recipeId) => recipeId !== recipe.id
         ));
 
-    await updateFavouriteRecipes({
-      variables: {
-        recipes: newFavouriteRecipes.map((recipeId) => {
-          return { recipe_id: { id: recipeId } };
-        }),
-      },
-    });
+    await updateFavouriteRecipes.mutateAsync(newFavouriteRecipes);
 
-    dispatch(fetchUserDetails());
+    dispatch(setFavouriteRecipes(newFavouriteRecipes));
+
     return;
   };
 
@@ -64,19 +69,20 @@ const RecipeCard: React.FC<{ recipe: RecipeClass }> = ({ recipe }) => {
         >
           <Image
             onLoad={() => setImageLoading(false)}
-            src={`${SITE_BACKEND_URL}/assets/${recipe.images![0]}`}
+            src={recipe.images![0] as string}
             width={315}
             height={415}
             className={style.image}
             alt={recipe.title}
           />
         </Spin>
+
         {isAuthorized && !imageLoading ? (
           <div className={style.favouriteContainer}>
             <Rate
               count={1}
               value={
-                (userDetails?.favouriteRecipes! as string[])?.includes(
+                (userDetails?.favourite_recipes! as number[])?.includes(
                   recipe.id
                 )
                   ? 1
@@ -134,7 +140,7 @@ const RecipeCard: React.FC<{ recipe: RecipeClass }> = ({ recipe }) => {
             <div className={style.descriptionDetailsServDesc}>Servings</div>
           </div>
           <div className={style.descriptionText}>{recipe.description}</div>
-          <Link href={`/recipes/${recipe.id}`}>
+          <Link href={`/recipes/${recipe.slug}`}>
             <a>
               <Button type="primary" className={style.descriptionButton}>
                 View recipe

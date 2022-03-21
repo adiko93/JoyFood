@@ -32,8 +32,9 @@ import { useMutation } from "@apollo/client";
 import { ADD_RECIPE } from "../../apollo/mutations";
 import { useSelector } from "react-redux";
 import { getIsAuthorized, getUserDetails } from "../../state/authSlice";
-import { RECIPE_CATEGORIES } from "../../utility/recipeCategories";
 import { useRouter } from "next/router";
+import { getCategories } from "../../state/utilitySlice";
+import { SITE_BACKEND_URL } from "../../utility/globals";
 
 const AddRecipe: React.FC = () => {
   const [title, setTitle] = useState("Click here to change title");
@@ -67,108 +68,109 @@ const AddRecipe: React.FC = () => {
 
   const userDetails = useSelector(getUserDetails);
   const isAuthorized = useSelector(getIsAuthorized);
+  const recipeCategories = useSelector(getCategories);
   const router = useRouter();
 
-  const [addRecipe, { data, error, loading }] = useMutation(ADD_RECIPE);
+  // const [addRecipe, { data, error, loading }] = useMutation(ADD_RECIPE);
 
   const { Option } = Select;
 
-  const addRecipeHandler = () => {
-    if (categories.length < 1) {
-      message.warning("Categories cannot be empty!");
-      return;
-    }
+  // const addRecipeHandler = () => {
+  //   if (categories.length < 1) {
+  //     message.warning("Categories cannot be empty!");
+  //     return;
+  //   }
 
-    if (imagesList.length < 1) {
-      message.warning("Please upload atleast one image!");
-      return;
-    }
+  //   if (imagesList.length < 1) {
+  //     message.warning("Please upload atleast one image!");
+  //     return;
+  //   }
 
-    if (!ingredients[0]?.ingredients[0]?.description) {
-      message.warning("Ingredients cannot be empty!");
-      return;
-    }
+  //   if (!ingredients[0]?.ingredients[0]?.description) {
+  //     message.warning("Ingredients cannot be empty!");
+  //     return;
+  //   }
 
-    if (!steps[0]?.steps[0]?.description) {
-      message.warning("Steps cannot be empty!");
-      return;
-    }
-    addRecipe({
-      variables: {
-        status: "Published",
-        title: title,
-        servings: servings,
-        publisher: userDetails.username,
-        cookingTime: cookingTime,
-        description: description,
-        categories: categories.map((category) => {
-          return {
-            category_id: {
-              id: RECIPE_CATEGORIES[category].id,
-              title: RECIPE_CATEGORIES[category].title,
-            },
-          };
-        }),
-        steps: steps.map((category) => {
-          return {
-            title: category.title,
-            steps: category.steps.map((step) => {
-              return {
-                description: step.description,
-                image: step.image[0]
-                  ? {
-                      id: step.image[0].response.data.id,
-                      filename_disk: step.image[0].response.data.filename_disk,
-                      filename_download:
-                        step.image[0].response.data.filename_download,
-                      filesize: +step.image[0].response.data.filesize,
-                      height: step.image[0].response.data.height,
-                      id: step.image[0].response.data.id,
-                      modified_on: step.image[0].response.data.modified_on,
-                      storage: step.image[0].response.data.storage,
-                      title: step.image[0].response.data.title,
-                      type: step.image[0].response.data.type,
-                      uploaded_on: step.image[0].response.data.uploaded_on,
-                      width: step.image[0].response.data.width,
-                    }
-                  : null,
-              };
-            }),
-          };
-        }),
-        ingredients: ingredients.map((category) => {
-          return {
-            title: category.title,
-            ingredients: category.ingredients.map((ingredient) => {
-              return {
-                quantity: ingredient.quantity,
-                unit: ingredient.unit,
-                description: ingredient.description,
-              };
-            }),
-          };
-        }),
-        images: imagesList.map((image) => {
-          const img = image.response.data;
-          return {
-            directus_files_id: {
-              id: img.id,
-              filename_disk: img.filename_disk,
-              filename_download: img.filename_download,
-              filesize: +img.filesize,
-              height: img.height,
-              modified_on: img.modified_on,
-              storage: img.storage,
-              title: img.title,
-              type: img.type,
-              uploaded_on: img.uploaded_on,
-              width: img.width,
-            },
-          };
-        }),
-      },
-    });
-  };
+  //   if (!steps[0]?.steps[0]?.description) {
+  //     message.warning("Steps cannot be empty!");
+  //     return;
+  //   }
+  //   addRecipe({
+  //     variables: {
+  //       status: "Published",
+  //       title: title,
+  //       servings: servings,
+  //       publisher: userDetails.username,
+  //       cookingTime: cookingTime,
+  //       description: description,
+  //       categories: categories.map((category) => {
+  //         return {
+  //           category_id: {
+  //             id: recipeCategories[category].id,
+  //             title: recipeCategories[category].title,
+  //           },
+  //         };
+  //       }),
+  //       steps: steps.map((category) => {
+  //         return {
+  //           title: category.title,
+  //           steps: category.steps.map((step) => {
+  //             return {
+  //               description: step.description,
+  //               image: step.image[0]
+  //                 ? {
+  //                     id: step.image[0].response.data.id,
+  //                     filename_disk: step.image[0].response.data.filename_disk,
+  //                     filename_download:
+  //                       step.image[0].response.data.filename_download,
+  //                     filesize: +step.image[0].response.data.filesize,
+  //                     height: step.image[0].response.data.height,
+  //                     id: step.image[0].response.data.id,
+  //                     modified_on: step.image[0].response.data.modified_on,
+  //                     storage: step.image[0].response.data.storage,
+  //                     title: step.image[0].response.data.title,
+  //                     type: step.image[0].response.data.type,
+  //                     uploaded_on: step.image[0].response.data.uploaded_on,
+  //                     width: step.image[0].response.data.width,
+  //                   }
+  //                 : null,
+  //             };
+  //           }),
+  //         };
+  //       }),
+  //       ingredients: ingredients.map((category) => {
+  //         return {
+  //           title: category.title,
+  //           ingredients: category.ingredients.map((ingredient) => {
+  //             return {
+  //               quantity: ingredient.quantity,
+  //               unit: ingredient.unit,
+  //               description: ingredient.description,
+  //             };
+  //           }),
+  //         };
+  //       }),
+  //       images: imagesList.map((image) => {
+  //         const img = image.response.data;
+  //         return {
+  //           directus_files_id: {
+  //             id: img.id,
+  //             filename_disk: img.filename_disk,
+  //             filename_download: img.filename_download,
+  //             filesize: +img.filesize,
+  //             height: img.height,
+  //             modified_on: img.modified_on,
+  //             storage: img.storage,
+  //             title: img.title,
+  //             type: img.type,
+  //             uploaded_on: img.uploaded_on,
+  //             width: img.width,
+  //           },
+  //         };
+  //       }),
+  //     },
+  //   });
+  // };
 
   if (!isAuthorized) {
     return (
@@ -193,6 +195,14 @@ const AddRecipe: React.FC = () => {
       </Layout>
     );
   }
+
+  const avatarProps = userDetails?.avatar
+    ? {
+        src: `${SITE_BACKEND_URL}${userDetails?.avatar}`,
+      }
+    : {
+        icon: <UserOutlined />,
+      };
 
   return (
     <Layout title="Add recipe" activeNav="recipes">
@@ -222,9 +232,9 @@ const AddRecipe: React.FC = () => {
                     style={{ width: "100%" }}
                     onChange={(event) => setCategories(event)}
                   >
-                    {RECIPE_CATEGORIES.map((category, index) => (
-                      <Option key={index} value={index}>
-                        {category.title}
+                    {recipeCategories.map((category: any, index) => (
+                      <Option key={index} value={Object.keys(category)[0]}>
+                        {category[Object.keys(category)[0]].title}
                       </Option>
                     ))}
                   </Select>
@@ -244,12 +254,15 @@ const AddRecipe: React.FC = () => {
               <div className={styles.author}>
                 <Avatar
                   size={35}
-                  icon={<UserOutlined />}
+                  {...avatarProps}
                   style={{
                     marginRight: "1rem",
                   }}
                 />
-                by <Link href="/">{userDetails.username}</Link>
+                by{" "}
+                <Link href="/recipes/">
+                  <>{userDetails.username}</>
+                </Link>
               </div>
             </div>
             <div className={styles.description}>
@@ -309,9 +322,8 @@ const AddRecipe: React.FC = () => {
               ingredients={ingredients}
               setIngredients={setIngredients}
             >
-              {(categoryKey) => (
+              {(categoryKey: any) => (
                 <DynamicList
-                  size="large"
                   categoryKey={categoryKey}
                   ingredients={ingredients}
                   setIngredients={setIngredients}
@@ -348,7 +360,7 @@ const AddRecipe: React.FC = () => {
             type="primary"
             size="large"
             icon={<SendOutlined />}
-            onClick={() => addRecipeHandler()}
+            // onClick={() => addRecipeHandler()}
             htmlType="submit"
           >
             Send
