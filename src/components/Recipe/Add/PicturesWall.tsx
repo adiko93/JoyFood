@@ -2,16 +2,13 @@ import { Upload, Modal, message } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
-import { getIsAuthorized, getJWTState } from "../../../state/authSlice";
-import { SITE_BACKEND_URL } from "../../../utility/globals";
-import { USER_DETAILS } from "../../../apollo/queries";
-import { DELETE_FILE } from "../../../apollo/mutations";
+import { getJWTState } from "../../../state/authSlice";
 import axiosStrapi from "../../../query/axiosInstance";
 import { useMutation } from "react-query";
 
 // TODO: REWORK SCSS + TSX
 
-function getBase64(file) {
+function getBase64(file: any) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
@@ -20,7 +17,15 @@ function getBase64(file) {
   });
 }
 
-function PicturesWall({ maxImages = "10", fileList, setFileList }) {
+function PicturesWall({
+  maxImages = "10",
+  fileList,
+  setFileList,
+}: {
+  maxImages: string;
+  fileList: any;
+  setFileList: any;
+}) {
   const [previewVisible, setPreviewVisible] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
   const [previewTitle, setPreviewTitle] = useState("");
@@ -41,7 +46,7 @@ function PicturesWall({ maxImages = "10", fileList, setFileList }) {
 
   const handleCancel = () => setPreviewVisible(false);
 
-  const handlePreview = async (file) => {
+  const handlePreview = async (file: any) => {
     if (!file.url && !file.preview) {
       file.preview = await getBase64(file.originFileObj);
     }
@@ -53,7 +58,7 @@ function PicturesWall({ maxImages = "10", fileList, setFileList }) {
     );
   };
 
-  const handleChange = ({ fileList }) => {
+  const handleChange = ({ fileList }: { fileList: any }) => {
     setFileList(fileList);
   };
 

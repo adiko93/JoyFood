@@ -1,6 +1,5 @@
 import { Menu } from "antd";
 import SubMenu from "antd/lib/menu/SubMenu";
-import Title from "antd/lib/typography/Title";
 import Layout from "../../../components/Layout/Layout";
 import styles from "../../../styles/User/Profile/Profile.module.css";
 import {
@@ -9,13 +8,13 @@ import {
   MailOutlined,
   ReadOutlined,
 } from "@ant-design/icons";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Favourite from "../../../components/User/Profile/Favourite";
 
 const Profile = () => {
   const [currentPage, setCurrentPage] = useState("Profile");
 
-  const handlePageChange = (page) => {
+  const handlePageChange = (page: any) => {
     let component;
     switch (page) {
       case "favourite":

@@ -18,10 +18,10 @@ const DynamicList: React.FC<{
   const [lastKey, setLastKey] = useState(1);
 
   const categoryIndex = ingredients.findIndex(
-    (category) => category.key === categoryKey
+    (category: any) => category.key === categoryKey
   );
 
-  const addIngredient = (lastKey) => {
+  const addIngredient = (lastKey: any) => {
     let newIngredients = _.cloneDeep(ingredients);
 
     newIngredients[categoryIndex].ingredients.push({
@@ -39,22 +39,22 @@ const DynamicList: React.FC<{
     );
   };
 
-  const deleteIngredient = (key) => {
+  const deleteIngredient = (key: number) => {
     let newIngredients = _.cloneDeep(ingredients);
     newIngredients[categoryIndex].ingredients = newIngredients[
       categoryIndex
-    ].ingredients.filter((ingredient) => ingredient.key !== key);
+    ].ingredients.filter((ingredient: any) => ingredient.key !== key);
     ingredients[categoryIndex].ingredients.length ===
       (currentPage - 1) * 10 + 1 && setCurrentPage((page) => page--);
 
     setIngredients(newIngredients);
   };
 
-  const inputHandler = (value, key, inputName) => {
+  const inputHandler = (value: any, key: any, inputName: any) => {
     let newIngredients = _.cloneDeep(ingredients);
     newIngredients[categoryIndex].ingredients = newIngredients[
       categoryIndex
-    ].ingredients.map((ingredient) => {
+    ].ingredients.map((ingredient: any) => {
       if (ingredient.key === key)
         ingredient[inputName] = value?.target?.value || value;
 
@@ -67,7 +67,7 @@ const DynamicList: React.FC<{
   const inputStyle = { marginBottom: "5px" };
 
   const mapIngredients = ingredients[categoryIndex].ingredients.map(
-    (ingredient, index) => {
+    (ingredient: any, index: any) => {
       if ((currentPage - 1) * 10 <= index && index <= currentPage * 10 - 1)
         return (
           <div className={style.row} key={index}>
@@ -111,7 +111,7 @@ const DynamicList: React.FC<{
   );
 
   const shownIngredientsArrayLenght = mapIngredients.filter(
-    (ingredient) => ingredient !== undefined
+    (ingredient: any) => ingredient !== undefined
   ).length;
 
   const addIngredientButton = (

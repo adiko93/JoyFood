@@ -14,4 +14,7 @@ module.exports = withLess({
       "storage.googleapis.com",
     ],
   },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
 });
