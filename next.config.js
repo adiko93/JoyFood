@@ -12,6 +12,7 @@ module.exports = withLess({
       "joyfood.ga:8055",
       "admin.joyfood.ga",
       "storage.googleapis.com",
+      "api.joyfood.ga",
     ],
   },
   typescript: {

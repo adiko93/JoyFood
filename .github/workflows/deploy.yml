@@ -28,7 +28,7 @@ jobs:
           PORT: ${{ secrets.PORT }}
           KEY: ${{ secrets.SSHKEY }}
           script: |
-            pm2 stop nextjs
             cd /home/strapi/JoyFood
             npm run build
-            pm2 start nextjs
+            chmod +x ./pm2_script.sh
+            bash ./pm2_script.sh
