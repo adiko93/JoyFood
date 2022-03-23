@@ -38,7 +38,7 @@ const Home: React.FC = () => {
               recipes={dataDinner}
               title="Dinner"
               svg="#icon-dinner"
-              iconWidth="8rem"
+              iconWidth="80px"
             />
           )}
         </Spin>
@@ -50,7 +50,7 @@ const Home: React.FC = () => {
               recipes={dataBreakfast}
               title="Breakfast"
               svg="#icon-breakfast"
-              iconWidth="9.5rem"
+              iconWidth="95px"
             />
           )}
         </Spin>
@@ -62,7 +62,7 @@ const Home: React.FC = () => {
               recipes={dataDessert}
               title="Dessert"
               svg="#icon-dessert"
-              iconWidth="4.5rem"
+              iconWidth="45px"
             />
           )}
         </Spin>

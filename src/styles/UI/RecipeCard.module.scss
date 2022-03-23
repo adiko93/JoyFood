@@ -1,3 +1,5 @@
+@import "../mixins.scss";
+
 .container {
   min-width: 31.5rem;
   position: relative;
@@ -69,7 +71,9 @@
     transform: translateY(18.8rem);
     backdrop-filter: blur(4px);
     width: 100%;
-
+    @include medium-screen {
+      padding: 0rem 1.8rem 2rem 1.8rem;
+    }
     &Title {
       text-align: center;
       font-size: 2.2rem;
@@ -133,7 +137,7 @@
         top: 0;
         left: 0;
         width: 100%;
-        height: 3px;
+        height: 0.3rem;
         background-color: #f0bd00;
         box-shadow: 0 0 1rem rgba(0, 0, 0, 0.39), 0 0 1rem rgba(0, 0, 0, 0.198);
         transition: all 0.2s;
@@ -145,14 +149,14 @@
         bottom: 0;
         left: 0;
         width: 100%;
-        height: 3px;
+        height: 0.3rem;
         box-shadow: 0 0 1rem rgba(0, 0, 0, 0.39), 0 0 1rem rgba(0, 0, 0, 0.198);
         background-color: #f0bd00;
       }
 
       svg {
-        width: 19px;
-        height: 19px;
+        width: 1.9rem;
+        height: 1.9rem;
         fill: rgb(218, 218, 218);
       }
 

@@ -1,5 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap");
 /* @import "~antd/dist/antd.css"; */
+@import "./mixins.scss";
 
 html,
 body {
@@ -9,6 +10,9 @@ body {
   font-weight: 400;
   font-size: 62.5% !important;
   background-color: rgb(240, 240, 240) !important;
+  @include medium-screen {
+    font-size: 50% !important;
+  }
 }
 
 a {

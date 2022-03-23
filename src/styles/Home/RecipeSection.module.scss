@@ -1,17 +1,25 @@
+@import "../mixins.scss";
+
 .section {
   padding: 2rem 3rem;
 
   &Title {
     font-size: 4.5rem;
     font-weight: 700;
-
+    @include extra-small-screen {
+      font-size: 3.5rem;
+      line-height: 8rem;
+    }
     &Color {
       color: #fa9400;
     }
 
     svg {
-      height: 5.4rem;
+      height: 54px;
       margin-right: 1rem;
+      @include extra-small-screen {
+        display: none;
+      }
     }
   }
 }
