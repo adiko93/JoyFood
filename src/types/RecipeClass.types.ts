@@ -35,6 +35,13 @@ export interface RecipeReviews {
   dateCreated: Date;
 }
 
+export interface RecipeImages {
+  full?: string;
+  small?: string;
+  medium?: string;
+  thumbnail?: string;
+}
+
 export interface RecipeClassInterface {
   id: number;
   title?: string;
@@ -51,7 +58,7 @@ export interface RecipeClassInterface {
   categories?: RecipeCategories[];
   ingredientsCategories?: RecipeIngredientsCategories[];
   stepsCategories?: RecipeStepsCategories[];
-  images?: string[] | FormData[];
+  images?: RecipeImages[];
   reviews?: RecipeReviews[];
 }
 

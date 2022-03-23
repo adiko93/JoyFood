@@ -12,8 +12,6 @@ import minutesToHours from "../../../utility/minutesToHours";
 import { RecipeClassInterface } from "../../../types";
 
 const Header: React.FC<{ recipe: RecipeClassInterface }> = ({ recipe }) => {
-  const images = recipe.images;
-
   const avatarProps = recipe?.publisherAvatar
     ? {
         src: `${recipe.publisherAvatar}`,
@@ -21,10 +19,11 @@ const Header: React.FC<{ recipe: RecipeClassInterface }> = ({ recipe }) => {
     : {
         icon: <UserOutlined />,
       };
+  console.log(recipe.images);
 
   return (
     <div className={styles.header}>
-      <RecipeCarousel slides={images as string[]} />
+      <RecipeCarousel slides={recipe.images!} />
       <div className={styles.details}>
         <div className={styles.detailsTitle}>
           {recipe.title}

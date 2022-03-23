@@ -245,6 +245,24 @@ export interface StrapiStringFilters {
   $between?: string[];
 }
 
+export interface imageFormat {
+  ext: string;
+  url: string;
+  hash: string;
+  mime: string;
+  name: string;
+  path: string;
+  size: number;
+  width: number;
+  height: number;
+}
+
+export interface imageFormats {
+  small?: imageFormat;
+  medium?: imageFormat;
+  thumbnail?: imageFormat;
+}
+
 export interface StrapiImage {
   id: number;
   attributes: {
@@ -253,7 +271,7 @@ export interface StrapiImage {
     caption: string;
     width: number;
     height: number;
-    formats: JSON;
+    formats: imageFormats;
     hash: string;
     ext: string;
     mime: string;

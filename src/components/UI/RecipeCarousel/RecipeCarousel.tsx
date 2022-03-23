@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useCallback } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import styles from "../../../styles/UI/RecipeCarousel/RecipeCarousel.module.scss";
-import { default as NextImage } from "next/image";
 import { Image } from "antd";
+import { RecipeImages } from "../../../types";
 
-const RecipeCarousel: React.FC<{ slides: string[] }> = ({ slides }) => {
+const RecipeCarousel: React.FC<{ slides: RecipeImages[] }> = ({ slides }) => {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [mainViewportRef, embla] = useEmblaCarousel({ skipSnaps: false });
   const [thumbViewportRef, emblaThumbs] = useEmblaCarousel({
@@ -12,13 +12,11 @@ const RecipeCarousel: React.FC<{ slides: string[] }> = ({ slides }) => {
     dragFree: true,
   });
 
-  const onThumbClick = useCallback(
-    (index) => {
-      if (!embla || !emblaThumbs) return;
-      if (emblaThumbs.clickAllowed()) embla.scrollTo(index);
-    },
-    [embla, emblaThumbs]
-  );
+  const onThumbClick = (index: number) => {
+    if (!embla || !emblaThumbs) return;
+    embla.scrollTo(index);
+    if (emblaThumbs.clickAllowed()) embla.scrollTo(index);
+  };
 
   const onSelect = useCallback(() => {
     if (!embla || !emblaThumbs) return;
@@ -32,6 +30,15 @@ const RecipeCarousel: React.FC<{ slides: string[] }> = ({ slides }) => {
     embla.on("select", onSelect);
   }, [embla, onSelect]);
 
+  useEffect(
+    () => () => {
+      embla?.destroy();
+    },
+    []
+  );
+  useEffect(() => {
+    embla?.reInit();
+  }, [slides]);
   return (
     <>
       <div className={styles.wraper}>
@@ -43,7 +50,7 @@ const RecipeCarousel: React.FC<{ slides: string[] }> = ({ slides }) => {
                   <div className={styles.slide} key={index}>
                     <Image
                       className={styles.slide__img}
-                      src={img}
+                      src={img.full}
                       alt="Recipe image"
                       preview={{}}
                     />
@@ -71,7 +78,7 @@ const RecipeCarousel: React.FC<{ slides: string[] }> = ({ slides }) => {
                   >
                     <img
                       className={styles.slide__thumbnail}
-                      src={`${img}?key=card`}
+                      src={`${img.thumbnail ? img.thumbnail : img.full}`}
                       alt="Recipe image"
                     />
                   </button>

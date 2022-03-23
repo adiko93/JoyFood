@@ -29,7 +29,7 @@ jobs:
           KEY: ${{ secrets.SSHKEY }}
           script: |
             cd /home/strapi/JoyFood
-            npm run build
             /root/.npm-global/bin/pm2 stop nextjs
+            npm run build
             chmod +x ./pm2_script.sh
             /root/.npm-global/bin/pm2 start nextjs

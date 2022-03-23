@@ -69,7 +69,11 @@ const RecipeCard: React.FC<{ recipe: RecipeClassInterface }> = ({ recipe }) => {
         >
           <Image
             onLoad={() => setImageLoading(false)}
-            src={recipe.images![0] as string}
+            src={
+              recipe.images![0].small
+                ? (recipe.images![0].small as string)
+                : (recipe.images![0].full as string)
+            }
             width={315}
             height={415}
             className={style.image}

@@ -47,7 +47,7 @@ const recipeCardFields = {
       fields: ["username"],
     },
     images: {
-      fields: ["url"],
+      fields: ["url", "formats"],
     },
   },
 };
@@ -86,7 +86,7 @@ const recipeFullFields = {
       },
     },
     images: {
-      fields: ["url"],
+      fields: ["url", "formats"],
     },
     reviews: {
       populate: {

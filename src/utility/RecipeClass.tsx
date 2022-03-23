@@ -2,6 +2,7 @@ import {
   RecipeCategories,
   RecipeCategoriesQuery,
   RecipeClassInterface,
+  RecipeImages,
   RecipeIngredientQuery,
   RecipeIngredients,
   RecipeIngredientsCategories,
@@ -100,8 +101,18 @@ export class RecipeClass implements RecipeClassInterface {
       }
     );
     this.images = recipeInput?.attributes.images?.data.map(
-      (image: StrapiImage): string =>
-        `${SITE_BACKEND_URL}${image.attributes.url}`
+      (image: StrapiImage): RecipeImages => ({
+        full: `${SITE_BACKEND_URL}${image.attributes.url}`,
+        small: image?.attributes?.formats?.small?.url
+          ? `${SITE_BACKEND_URL}${image?.attributes?.formats?.small?.url}`
+          : undefined,
+        medium: image.attributes.formats?.medium?.url
+          ? `${SITE_BACKEND_URL}${image.attributes.formats?.medium?.url}`
+          : undefined,
+        thumbnail: image.attributes.formats?.thumbnail?.url
+          ? `${SITE_BACKEND_URL}${image.attributes.formats?.thumbnail?.url}`
+          : undefined,
+      })
     );
     this.reviews = recipeInput?.attributes?.reviews?.data.map(
       (review: RecipeReviewQuery): RecipeReviews => {
