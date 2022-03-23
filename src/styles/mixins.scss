@@ -1,3 +1,8 @@
+@mixin extra-extra-small-screen {
+  @media (max-width: 440px) {
+    @content;
+  }
+}
 @mixin extra-small-screen {
   @media (max-width: 576px) {
     @content;

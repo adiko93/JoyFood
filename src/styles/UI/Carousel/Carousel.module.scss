@@ -1,3 +1,5 @@
+@import "../../mixins.scss";
+
 .carousel {
   position: relative;
   max-width: auto;
@@ -6,6 +8,10 @@
 .viewport {
   overflow: hidden;
   width: 100%;
+  @include extra-extra-small-screen {
+    width: 32rem;
+    margin-inline: auto;
+  }
 }
 
 .viewport.is-draggable {

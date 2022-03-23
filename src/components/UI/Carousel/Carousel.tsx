@@ -2,11 +2,14 @@ import React, { useState, useEffect, useCallback, SetStateAction } from "react";
 import { PrevButton, NextButton } from "./Buttons";
 import useEmblaCarousel from "embla-carousel-react";
 import style from "../../../styles/UI/Carousel/Carousel.module.scss";
+import { useMediaQuery } from "react-responsive";
 
 const Carousel: React.FC = (props) => {
+  const isSmallScreen = useMediaQuery({ query: "(max-width: 440px)" });
+  const isMediumScreen = useMediaQuery({ query: "(max-width: 576px)" });
   const [viewportRef, embla] = useEmblaCarousel({
     skipSnaps: true,
-    slidesToScroll: 3,
+    slidesToScroll: isSmallScreen ? 1 : isMediumScreen ? 2 : 3,
     dragFree: true,
     containScroll: "trimSnaps",
     align: "start",
