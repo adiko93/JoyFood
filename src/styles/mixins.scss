@@ -18,3 +18,8 @@
     @content;
   }
 }
+@mixin large-screen {
+  @media (max-width: 1280px) {
+    @content;
+  }
+}

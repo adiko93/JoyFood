@@ -22,7 +22,7 @@ const Filters: React.FC = () => {
   const { Panel } = Collapse;
 
   state = (
-    <div className={styles.filters}>
+    <>
       <div className={styles.filtersTitle}>Filters</div>
       <Collapse
         expandIconPosition="right"
@@ -54,7 +54,7 @@ const Filters: React.FC = () => {
           <AuthorFilter />
         </Panel>
       </Collapse>
-    </div>
+    </>
   );
 
   return state;

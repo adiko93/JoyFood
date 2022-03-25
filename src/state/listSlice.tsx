@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "./store";
+import _ from "lodash";
 
 interface ListInitialState {
   filters: {
@@ -17,23 +18,25 @@ interface ListInitialState {
   rerenderFilters: boolean;
 }
 
+const initialState = {
+  filters: {
+    search: "",
+    categories: [],
+    cookingTime: [1, 2000],
+    ingredients: [],
+    rating: [0, 5],
+    author: "",
+  },
+  pagination: {
+    page: 1,
+    perPage: 12,
+  },
+  rerenderFilters: false,
+};
+
 export const listSlice = createSlice({
   name: "list",
-  initialState: {
-    filters: {
-      search: "",
-      categories: [],
-      cookingTime: [1, 2000],
-      ingredients: [],
-      rating: [0, 5],
-      author: "",
-    },
-    pagination: {
-      page: 1,
-      perPage: 12,
-    },
-    rerenderFilters: false,
-  } as ListInitialState,
+  initialState,
   reducers: {
     resetFilters: (state) => {
       state.filters.categories = [];
@@ -90,7 +93,6 @@ export const getRating = (state: RootState) => state.list.filters.rating;
 export const getAuthor = (state: RootState) => state.list.filters.author;
 export const getRerenderFilters = (state: RootState) =>
   state.list.rerenderFilters;
-
 export const getPagination = (state: RootState) => state.list.pagination;
 export const getPage = (state: RootState) => state.list.pagination.page;
 export const getPerPage = (state: RootState) => state.list.pagination.perPage;

@@ -5,9 +5,9 @@ import Filters from "../../components/Recipe/List/Filters";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/router";
 import RecipeCard from "../../components/UI/RecipeCard";
-import { Button, Pagination, Result, Spin } from "antd";
+import { Affix, Button, Pagination, Result, Spin } from "antd";
 import { useDispatch, useSelector } from "react-redux";
-import { MehOutlined } from "@ant-design/icons";
+import { MehOutlined, RightOutlined } from "@ant-design/icons";
 import {
   getFilters,
   getPagination,
@@ -24,6 +24,9 @@ import {
 } from "../../query/queries";
 import { queryClient } from "../_app";
 import { getCategories } from "../../state/utilitySlice";
+import { useMediaQuery } from "react-responsive";
+import { motion } from "framer-motion";
+import { animateScroll } from "react-scroll";
 
 interface FilterDefaults {
   search: string;
@@ -50,6 +53,8 @@ const FILTER_DEFAULTS: FilterDefaults = {
 const List: React.FC = () => {
   const [loadingDefaults, setLoadingDefaults] = useState(true);
   const [filters, setFilters] = useState<StrapiRecipeFilters>({});
+  const isFloatingFilters = useMediaQuery({ query: "(max-width: 1280px)" });
+  const [filtersVisible, setFiltersVisible] = useState(false);
 
   const router = useRouter();
   const dispatch = useDispatch();
@@ -278,6 +283,77 @@ const List: React.FC = () => {
       </Layout>
     );
 
+  let filtersProp;
+
+  const animateVariants = {
+    hidden: { x: "-34rem" },
+    visible: { x: 0 },
+  };
+  if (!loadingDefaults) {
+    if (isFloatingFilters) {
+      filtersProp = (
+        <>
+          <motion.div
+            className={styles.filtersButton}
+            onClick={() => {
+              setFiltersVisible((current) => !current);
+            }}
+            animate={{
+              x: filtersVisible ? "34rem" : 0,
+            }}
+            transition={{
+              type: "tween",
+            }}
+          >
+            Filters{" "}
+            <motion.div
+              animate={{
+                rotate: filtersVisible ? 180 : 0,
+                x: filtersVisible ? -4 : 0,
+                y: filtersVisible ? 3 : 0,
+              }}
+              style={{
+                paddingTop: ".3rem",
+                display: "inline-block",
+                color: "black",
+                fontSize: "1.8rem",
+              }}
+            >
+              <RightOutlined />
+            </motion.div>
+          </motion.div>
+          <motion.div
+            variants={animateVariants}
+            className={styles.filters}
+            animate={filtersVisible ? "visible" : "hidden"}
+            transition={{
+              type: "tween",
+            }}
+          >
+            <Filters />
+          </motion.div>
+          <motion.div
+            animate={{
+              display: "block",
+              opacity: filtersVisible ? 1 : 0,
+              transitionEnd: {
+                display: filtersVisible ? "block" : "none",
+              },
+            }}
+            className={styles.filtersBackdrop}
+            onClick={() => setFiltersVisible((current) => !current)}
+          ></motion.div>
+        </>
+      );
+    } else {
+      filtersProp = (
+        <div className={styles.filters}>
+          <Filters />
+        </div>
+      );
+    }
+  }
+
   return (
     <Layout title="Recipes" activeNav="recipes">
       <div className={styles.container}>
@@ -287,7 +363,7 @@ const List: React.FC = () => {
           size="large"
           className={styles.spinner}
         >
-          {loadingDefaults ? "" : <Filters />}
+          {filtersProp}
         </Spin>
         <Spin
           tip="Loading..."

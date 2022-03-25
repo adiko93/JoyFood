@@ -30,6 +30,6 @@ jobs:
           script: |
             cd /home/strapi/JoyFood
             /root/.npm-global/bin/pm2 stop nextjs
+            npm install
             npm run build
-            chmod +x ./pm2_script.sh
             /root/.npm-global/bin/pm2 start nextjs
