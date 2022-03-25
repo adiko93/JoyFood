@@ -1,8 +1,12 @@
+@import "../../mixins.scss";
+
 .container {
   background-color: white;
   padding-inline: 7rem;
   padding-block: 3rem;
-
+  @include small-screen {
+    padding-inline: 1.5rem;
+  }
   .title {
     font-size: 3.6rem;
     font-weight: 700;
@@ -77,6 +81,10 @@
   .form {
     display: grid;
     grid-template-columns: repeat(8, 1fr);
+    @include large-screen {
+      display: flex;
+      flex-direction: column;
+    }
 
     &InputTitle {
       grid-column: 1/8;

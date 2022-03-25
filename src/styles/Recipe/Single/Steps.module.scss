@@ -1,6 +1,11 @@
+@import "../../mixins.scss";
+
 .container {
   background-color: #f7f7f7;
   padding: 2rem 5rem 2rem 5rem;
+  @include small-screen {
+    padding-inline: 1.5rem;
+  }
 
   .categoryTitle {
     font-size: 3.6rem;
