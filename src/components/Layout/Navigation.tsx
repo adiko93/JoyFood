@@ -115,10 +115,9 @@ const Navigation: React.FC<{ active: string[] }> = ({ active }) => {
           <Menu
             selectedKeys={active}
             mode="horizontal"
-            disabledOverflow
             className={styles.navigation}
           >
-            <Menu.Item key="home">
+            <Menu.Item key="home" className={styles.navigationItem}>
               <Link href="/">Home</Link>
             </Menu.Item>
 

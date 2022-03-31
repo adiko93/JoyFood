@@ -25,7 +25,7 @@ import DynamicTabs from "../../components/Recipe/Add/DynamicTabs";
 import DynamicList from "../../components/Recipe/Add/DynamicList";
 import PicturesWall from "../../components/Recipe/Add/PicturesWall";
 import { useState } from "react";
-import EditableField from "../../components/UI/EditableField";
+import EditableField from "../../components/Recipe/Add/EditableField";
 import _ from "lodash";
 import DynamicSteps from "../../components/Recipe/Add/DynamicSteps";
 import { useMutation } from "@apollo/client";

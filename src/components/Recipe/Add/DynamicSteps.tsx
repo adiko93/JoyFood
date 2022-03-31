@@ -2,7 +2,7 @@ import styles from "../../../styles/Recipe/Add/DynamicSteps.module.css";
 import { PlusOutlined, MinusOutlined } from "@ant-design/icons";
 import { Button, Divider, Input } from "antd";
 import PicturesWall from "./PicturesWall";
-import EditableField from "../../UI/EditableField";
+import EditableField from "./EditableField";
 import _ from "lodash";
 import { useState } from "react";
 

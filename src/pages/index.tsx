@@ -5,26 +5,46 @@ import { RecipeQuery } from "../types";
 import { fetchRecipes, queryCategoryRecipes } from "../query/queries";
 import { useQuery } from "react-query";
 import { Spin } from "antd";
+import ErrorPage from "../components/Global/ErrorPage";
 
 const Home: React.FC = () => {
-  const { data: dataBreakfast, status: statusBreakfast } = useQuery(
-    "recipeCategoriesBreakfast",
-    async () => {
-      return await fetchRecipes(queryCategoryRecipes("breakfast"));
-    }
-  );
-  const { data: dataDinner, status: statusDinner } = useQuery(
-    "recipeCategoriesDinner",
-    async () => {
-      return await fetchRecipes(queryCategoryRecipes("dinner"));
-    }
-  );
-  const { data: dataDessert, status: statusDessert } = useQuery(
-    "recipeCategoriesDessert",
-    async () => {
-      return await fetchRecipes(queryCategoryRecipes("dessert"));
-    }
-  );
+  const {
+    data: dataBreakfast,
+    status: statusBreakfast,
+    error: errorBreakfast,
+  } = useQuery("recipeCategoriesBreakfast", async () => {
+    return await fetchRecipes(queryCategoryRecipes("breakfast"));
+  });
+  const {
+    data: dataDinner,
+    status: statusDinner,
+    error: errorDinner,
+  } = useQuery("recipeCategoriesDinner", async () => {
+    return await fetchRecipes(queryCategoryRecipes("dinner"));
+  });
+  const {
+    data: dataDessert,
+    status: statusDessert,
+    error: errorDessert,
+  } = useQuery("recipeCategoriesDessert", async () => {
+    return await fetchRecipes(queryCategoryRecipes("dessert"));
+  });
+
+  if (
+    statusDessert === "error" ||
+    statusDinner === "error" ||
+    statusBreakfast === "error"
+  ) {
+    return (
+      <ErrorPage
+        errorMessage={
+          (errorDessert as any).message ||
+          (errorBreakfast as any).message ||
+          (errorDinner as any).message
+        }
+      />
+    );
+  }
 
   return (
     <Layout title="Home page" activeNav="home">

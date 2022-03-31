@@ -1,5 +1,5 @@
 import { Rate, Avatar, Tag } from "antd";
-import RecipeCarousel from "../../UI/RecipeCarousel/RecipeCarousel";
+import RecipeCarousel from "./RecipeCarousel/RecipeCarousel";
 import styles from "../../../styles/Recipe/Single/Header.module.scss";
 import {
   UserOutlined,

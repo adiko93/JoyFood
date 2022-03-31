@@ -1,4 +1,4 @@
-import { Form, Input, Button, Checkbox, Tooltip } from "antd";
+import { Form, Input, Button, Checkbox } from "antd";
 import { MailOutlined, LockOutlined } from "@ant-design/icons";
 import OauthButton from "../UI/OauthButton";
 import SVG from "../../utility/Svg";

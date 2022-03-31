@@ -19,8 +19,8 @@ const CookingTimeFilter: React.FC = () => {
         range
         min={1}
         max={2000}
-        defaultValue={cookingTimeState}
-        value={cookingTimeState}
+        defaultValue={cookingTimeState as [number, number]}
+        value={cookingTimeState as [number, number]}
         tipFormatter={(key) => minutesToHours(key!)}
         onChange={(key) =>
           dispatch(updateFilters({ name: "cookingTime", value: key }))

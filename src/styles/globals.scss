@@ -54,3 +54,10 @@ a {
 .ant-image-mask-info {
   font-size: 1.4rem;
 }
+
+.ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-item,
+.ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-submenu {
+  @include extra-extra-small-screen {
+    padding: 0 10px !important;
+  }
+}

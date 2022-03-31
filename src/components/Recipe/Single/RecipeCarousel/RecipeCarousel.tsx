@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback } from "react";
 import useEmblaCarousel from "embla-carousel-react";
-import styles from "../../../styles/UI/RecipeCarousel/RecipeCarousel.module.scss";
+import styles from "../../../../styles/UI/RecipeCarousel/RecipeCarousel.module.scss";
 import { Image } from "antd";
-import { RecipeImages } from "../../../types";
+import { RecipeImages } from "../../../../types";
 
 const RecipeCarousel: React.FC<{ slides: RecipeImages[] }> = ({ slides }) => {
   const [selectedIndex, setSelectedIndex] = useState(0);

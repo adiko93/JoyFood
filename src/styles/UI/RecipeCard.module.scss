@@ -73,7 +73,9 @@
     backdrop-filter: blur(4px);
     width: 100%;
     @include medium-screen {
-      padding: 0rem 1.8rem 2rem 1.8rem;
+      transform: translateY(19.35rem);
+      height: 30.5rem;
+      padding: 1rem 1.8rem 2rem 1.8rem;
     }
     &Title {
       text-align: center;

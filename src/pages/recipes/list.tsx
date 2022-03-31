@@ -5,13 +5,14 @@ import Filters from "../../components/Recipe/List/Filters";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/router";
 import RecipeCard from "../../components/UI/RecipeCard";
-import { Affix, Button, Pagination, Result, Spin } from "antd";
+import { Pagination, Result, Spin } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { MehOutlined, RightOutlined } from "@ant-design/icons";
 import {
   getFilters,
   getPagination,
   getPerPage,
+  listInitialState,
   updateFilters,
   updatePagination,
 } from "../../state/listSlice";
@@ -26,7 +27,7 @@ import { queryClient } from "../_app";
 import { getCategories } from "../../state/utilitySlice";
 import { useMediaQuery } from "react-responsive";
 import { motion } from "framer-motion";
-import { animateScroll } from "react-scroll";
+import ErrorPage from "../../components/Global/ErrorPage";
 
 interface FilterDefaults {
   search: string;
@@ -264,24 +265,7 @@ const List: React.FC = () => {
   }, [query]);
 
   // Error handler
-  if (isError)
-    return (
-      <Layout title="Error" activeNav="home">
-        <div className={styles.container}>
-          <Result
-            className={styles.error}
-            status="error"
-            title="Something went wrong"
-            subTitle={`Please try to reload the page. Error message: ${error?.message}`}
-            extra={[
-              <Button key="reload" onClick={router.reload}>
-                Refresh
-              </Button>,
-            ]}
-          ></Result>
-        </div>
-      </Layout>
-    );
+  if (isError) return <ErrorPage errorMessage={(error as any).message} />;
 
   let filtersProp;
 
@@ -289,6 +273,7 @@ const List: React.FC = () => {
     hidden: { x: "-34rem" },
     visible: { x: 0 },
   };
+
   if (!loadingDefaults) {
     if (isFloatingFilters) {
       filtersProp = (
@@ -316,7 +301,7 @@ const List: React.FC = () => {
                 paddingTop: ".3rem",
                 display: "inline-block",
                 color: "black",
-                fontSize: "1.8rem",
+                fontSize: "1.2rem",
               }}
             >
               <RightOutlined />

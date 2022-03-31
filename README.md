@@ -1,3 +1,7 @@
+# Demo
+
+You can visit https://joyfood.ga to see this project live. Bear in mind this project is not finished and some functions may not work properly
+
 # JoyFood - Recipe APP
 
 Hi! I'm Adrian and this is my project i've been working on for some time. It uses Next.JS for frontend and Strapi as backend. This project was made only for educational purpouse. Data i've used was scrapped using python Beautifull Soup from **AllRecipes**. If you want to use any code i've wrote here go ahead but please inform me before :)
