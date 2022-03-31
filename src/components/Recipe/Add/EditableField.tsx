@@ -7,7 +7,7 @@ import {
   useRef,
   useState,
 } from "react";
-import styles from "../../styles/UI/EditableField.module.scss";
+import styles from "../../../styles/UI/EditableField.module.scss";
 
 interface EditableField {
   size?: SizeType;
